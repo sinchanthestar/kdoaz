@@ -926,21 +926,21 @@ function AIKO:Window(GuiConfig)
 
     local MainButton = Instance.new("ImageButton")
     MainButton.Parent = ScreenGui
-    MainButton.Size = UDim2.new(0, 47, 0, 47)
+    MainButton.Size = UDim2.new(0, 50, 0, 50)
     MainButton.Position = UDim2.new(0, 60, 0, 60)
     MainButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     MainButton.BackgroundTransparency = 0.5
-    MainButton.Image = "rbxassetid://140356301069419"
+    MainButton.Image = "rbxassetid://105338847670181"
     MainButton.Name = "aikowaretoggle"
-    MainButton.AutoButtonColor = true
+    MainButton.AutoButtonColor = false
     MainButton.ScaleType = Enum.ScaleType.Fit
 
     local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 12)
+    UICorner.CornerRadius = UDim.new(0, 10)
     UICorner.Parent = MainButton
 
     local UIStroke = Instance.new("UIStroke")
-    UIStroke.Thickness = 1.5
+    UIStroke.Thickness = 0
     UIStroke.Color = Color3.fromRGB(45, 45, 45)
     UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     UIStroke.Parent = MainButton
