@@ -401,6 +401,7 @@ fsh:AddButton({
 local fin = Fishing:AddSection("Instant")
 
 local InstantFishEnabled = false
+local CancelDelay = 0.5
 local CompleteDelay = 1
 
 local function EquipFishingRod()
@@ -415,7 +416,7 @@ local function InstantFishCycle()
             ChargeFishingRod:InvokeServer(9999999999)
             RequestFishingMinigame:InvokeServer(-1.238, 0.969)
         end)
-        task.wait(0.1)
+        task.wait(CancelDelay)
 
         pcall(function()
             CancelFishingInputs:InvokeServer()
@@ -459,7 +460,8 @@ fin:AddToggle({
 })
 
 local CompleteDelayInput = fin:AddInput({
-    Title = "Delay",
+    Title = "Complete Delay",
+    Content = "Enter delay in seconds",
     Placeholder = "1",
     Callback = function(value)
         local delay = tonumber(value)
@@ -467,6 +469,20 @@ local CompleteDelayInput = fin:AddInput({
             CompleteDelay = delay
         elseif CompleteDelayInput then
             CompleteDelayInput:Set(tostring(CompleteDelay))
+        end
+    end
+})
+
+local CancelDelayInput = fin:AddInput({
+    Title = "Cancel Delay",
+    Content = "Enter delay in seconds",
+    Placeholder = "0.5",
+    Callback = function(value)
+        local delay = tonumber(value)
+        if delay and delay > 0 then
+            CancelDelay = delay
+        elseif CancelDelayInput then
+            CancelDelayInput:Set(tostring(CancelDelay))
         end
     end
 })
