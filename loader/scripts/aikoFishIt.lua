@@ -421,6 +421,91 @@ local function InstantFishCycle()
         pcall(function()
             CancelFishingInputs:InvokeServer()
         end)
+        task.wait(CompleteDelay)
+
+        if InstantFishEnabled then
+            pcall(function()
+                FishingCompleted:FireServer()
+            end)
+            task.wait(0.1)
+            task.spawn(InstantFishCycle)
+        end
+    end
+end
+
+function StartInstantFish()
+    if not InstantFishEnabled then
+        InstantFishEnabled = true
+        EquipFishingRod()
+        task.wait(0.5)
+        task.spawn(InstantFishCycle)
+    end
+end
+
+function StopInstantFish()
+    InstantFishEnabled = false
+end
+
+fin:AddToggle({
+    Title = "Instant Fishing",
+    Desc = "Auto fish using instant method",
+    Value = false,
+    Callback = function(enabled)
+        if enabled then
+            StartInstantFish()
+            Window:Notify({Title = "Instant Fish", Desc = "Started", Time = 2})
+        else
+            StopInstantFish()
+            Window:Notify({Title = "Instant Fish", Desc = "Stopped", Time = 2})
+        end
+    end
+})
+
+fin:AddSlider({
+    Title = "Complete Delay",
+    Min = 0.1,
+    Max = 5,
+    Rounding = 1,
+    Value = 1,
+    Callback = function(val)
+        CompleteDelay = val
+    end
+})
+
+fin:AddSlider({
+    Title = "Cancel Delay",
+    Min = 0.05,
+    Max = 2,
+    Rounding = 2,
+    Value = 0.1,
+    Callback = function(val)
+        CancelDelay = val
+    end
+})
+
+--[[local fin = Fishing:AddSection("Instant")
+
+local InstantFishEnabled = false
+local CancelDelay = 0.1
+local CompleteDelay = 1
+
+local function EquipFishingRod()
+    pcall(function()
+        EquipToolFromHotbar:FireServer(1)
+    end)
+end
+
+local function InstantFishCycle()
+    if InstantFishEnabled then
+        pcall(function()
+            ChargeFishingRod:InvokeServer(100)
+            RequestFishingMinigame:InvokeServer(-139.63796997070312, 0.9964792798079721)
+        end)
+        task.wait(CancelDelay)
+
+        pcall(function()
+            CancelFishingInputs:InvokeServer()
+        end)
 
         if InstantFishEnabled then
             pcall(function()
@@ -489,7 +574,7 @@ local SuperCompleteDelayInput = fin:AddInput({
             CancelDelayInput:Set(tostring(CancelDelay))
         end
     end
-})
+})]]
 
 local bts = Fishing:AddSection("Blatant")
 
