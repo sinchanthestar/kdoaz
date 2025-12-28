@@ -301,18 +301,6 @@ fsh:AddParagraph({
 
 fsh:AddDivider()
 
-local legitDELAY = fsh:AddInput({
-    Title = "Legit Fishing Delay",
-    Content = "",
-    Placeholder = "0.05",
-    Callback = function(value)
-        local delay = tonumber(value)
-        if delay and delay > 0 then
-            _G.SPEED_LEGIT = delay
-        end
-    end
-})
-
 fsh:AddToggle({
     Title = "Legit Fishing",
     Content = "",
@@ -331,6 +319,18 @@ fsh:AddToggle({
         else
             fishingGui.Visible = true
             chargeGui.Visible = true
+        end
+    end
+})
+
+local legitDELAY = fsh:AddInput({
+    Title = "Legit Fishing Delay",
+    Content = "",
+    Placeholder = "0.05",
+    Callback = function(value)
+        local delay = tonumber(value)
+        if delay and delay > 0 then
+            _G.SPEED_LEGIT = delay
         end
     end
 })
@@ -401,95 +401,6 @@ fsh:AddButton({
 local fin = Fishing:AddSection("Instant")
 
 local InstantFishEnabled = false
-local CancelDelay = 0.5
-local CompleteDelay = 1
-
-local function EquipFishingRod()
-    pcall(function()
-        EquipToolFromHotbar:FireServer(1)
-    end)
-end
-
-local function InstantFishCycle()
-    if InstantFishEnabled then
-        pcall(function()
-            ChargeFishingRod:InvokeServer(9999999999)
-            RequestFishingMinigame:InvokeServer(-1.238, 0.969)
-        end)
-        task.wait(CancelDelay)
-
-        pcall(function()
-            CancelFishingInputs:InvokeServer()
-        end)
-        task.wait(CompleteDelay)
-
-        if InstantFishEnabled then
-            pcall(function()
-                FishingCompleted:FireServer()
-            end)
-            task.wait(0.1)
-            task.spawn(InstantFishCycle)
-        end
-    end
-end
-
-function StartInstantFish()
-    if not InstantFishEnabled then
-        InstantFishEnabled = true
-        EquipFishingRod()
-        task.wait(0.5)
-        task.spawn(InstantFishCycle)
-    end
-end
-
-function StopInstantFish()
-    InstantFishEnabled = false
-end
-
-fin:AddToggle({
-    Title = "Instant Fishing",
-    Content = "",
-    Default = false,
-    Callback = function(enabled)
-        if enabled then
-            StartInstantFish()
-        else
-            StopInstantFish()
-        end
-    end
-})
-
-local CompleteDelayInput = fin:AddInput({
-    Title = "Complete Delay",
-    Content = "Enter delay in seconds",
-    Placeholder = "1",
-    Callback = function(value)
-        local delay = tonumber(value)
-        if delay and delay > 0 then
-            CompleteDelay = delay
-        elseif CompleteDelayInput then
-            CompleteDelayInput:Set(tostring(CompleteDelay))
-        end
-    end
-})
-
-local CancelDelayInput = fin:AddInput({
-    Title = "Cancel Delay",
-    Content = "Enter delay in seconds",
-    Placeholder = "0.5",
-    Callback = function(value)
-        local delay = tonumber(value)
-        if delay and delay > 0 then
-            CancelDelay = delay
-        elseif CancelDelayInput then
-            CancelDelayInput:Set(tostring(CancelDelay))
-        end
-    end
-})
-
---[[local fin = Fishing:AddSection("Instant")
-
-local InstantFishEnabled = false
 local CancelDelay = 0.1
 local CompleteDelay = 1
 
@@ -553,8 +464,7 @@ fin:AddToggle({
 })
 
 local CompleteDelayInput = fin:AddInput({
-    Title = "Complete Delay",
-    Content = "Enter delay in seconds",
+    Title = "Delay",
     Placeholder = "1",
     Callback = function(value)
         local delay = tonumber(value)
@@ -568,7 +478,6 @@ local CompleteDelayInput = fin:AddInput({
 
 local SuperCompleteDelayInput = fin:AddInput({
     Title = "Cancel Delay",
-    Content = "Enter delay in seconds",
     Placeholder = "0.1",
     Callback = function(value)
         local delay = tonumber(value)
@@ -578,7 +487,7 @@ local SuperCompleteDelayInput = fin:AddInput({
             CancelDelayInput:Set(tostring(CancelDelay))
         end
     end
-})]]
+})
 
 local bts = Fishing:AddSection("Blatant")
 
