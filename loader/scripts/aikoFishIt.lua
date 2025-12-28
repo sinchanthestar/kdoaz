@@ -415,7 +415,7 @@ local function InstantFishCycle()
             ChargeFishingRod:InvokeServer(9999999999)
             RequestFishingMinigame:InvokeServer(-1.238, 0.969)
         end)
-        task.wait(0.5)
+        task.wait(0.1)
 
         pcall(function()
             CancelFishingInputs:InvokeServer()
@@ -446,27 +446,28 @@ function StopInstantFish()
 end
 
 fin:AddToggle({
-    Title = "Instant Fish",
-    Value = false,
+    Title = "Instant Fishing",
+    Content = "",
+    Default = false,
     Callback = function(enabled)
         if enabled then
             StartInstantFish()
-            Window:Notify({Title = "Instant Fish", Desc = "Started", Time = 2})
         else
             StopInstantFish()
-            Window:Notify({Title = "Instant Fish", Desc = "Stopped", Time = 2})
         end
     end
 })
 
-fin:AddSlider({
+local CompleteDelayInput = fin:AddInput({
     Title = "Delay",
-    Min = 0.1,
-    Max = 5,
-    Rounding = 1,
-    Value = 1,
-    Callback = function(val)
-        CompleteDelay = val
+    Placeholder = "1",
+    Callback = function(value)
+        local delay = tonumber(value)
+        if delay and delay > 0 then
+            CompleteDelay = delay
+        elseif CompleteDelayInput then
+            CompleteDelayInput:Set(tostring(CompleteDelay))
+        end
     end
 })
 
