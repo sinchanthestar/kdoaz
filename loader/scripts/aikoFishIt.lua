@@ -401,7 +401,6 @@ fsh:AddButton({
 local fin = Fishing:AddSection("Instant")
 
 local InstantFishEnabled = false
-local CancelDelay = 0.1
 local CompleteDelay = 1
 
 local function EquipFishingRod()
@@ -413,10 +412,10 @@ end
 local function InstantFishCycle()
     if InstantFishEnabled then
         pcall(function()
-            ChargeFishingRod:InvokeServer(100)
-            RequestFishingMinigame:InvokeServer(-139.63796997070312, 0.9964792798079721)
+            ChargeFishingRod:InvokeServer(9999999999)
+            RequestFishingMinigame:InvokeServer(-1.238, 0.969)
         end)
-        task.wait(CancelDelay)
+        task.wait(0.5)
 
         pcall(function()
             CancelFishingInputs:InvokeServer()
@@ -447,8 +446,7 @@ function StopInstantFish()
 end
 
 fin:AddToggle({
-    Title = "Instant Fishing",
-    Desc = "Auto fish using instant method",
+    Title = "Instant Fish",
     Value = false,
     Callback = function(enabled)
         if enabled then
@@ -462,24 +460,13 @@ fin:AddToggle({
 })
 
 fin:AddSlider({
-    Title = "Complete Delay",
+    Title = "Delay",
     Min = 0.1,
     Max = 5,
     Rounding = 1,
     Value = 1,
     Callback = function(val)
         CompleteDelay = val
-    end
-})
-
-fin:AddSlider({
-    Title = "Cancel Delay",
-    Min = 0.05,
-    Max = 2,
-    Rounding = 2,
-    Value = 0.1,
-    Callback = function(val)
-        CancelDelay = val
     end
 })
 
