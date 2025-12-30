@@ -208,21 +208,14 @@ srv:AddButton({
     end
 })
 
--- ========================================
--- COMPLETE LEGIT FISHING REPLACEMENT
--- Find the entire "fsh" section and replace with this
--- ========================================
+local fsh = Fishing:AddSection("Legit (Auto Perfect)")
 
-local fsh = Fishing:AddSection("Legit")
-
--- Variables for Legit Fishing
 local MouseReleaseCallback = nil
 local LegitShakeDelay = 0.05
-local LegitDelay = 0.1
+local DefaultLegitDelay = 0.1
 
 _G.FishMiniData = _G.FishMiniData or {}
 
--- Store the mouse release callback
 local InputControl = require(ReplicatedStorage.Modules.InputControl)
 local OldRegisterMouseReleased = InputControl.RegisterMouseReleased
 
@@ -231,23 +224,19 @@ function InputControl.RegisterMouseReleased(self, param2, callback)
     return OldRegisterMouseReleased(self, param2, callback)
 end
 
--- Cast rod with bar release
 function castWithBarRelease()
     local PlayerGui = LocalPlayer.PlayerGui
     local Camera = workspace.CurrentCamera
     local CenterPosition = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
     
-    -- Cancel any ongoing fishing
     pcall(function()
         CancelFishingInputs:InvokeServer()
     end)
     
-    -- Request to charge the fishing rod
     pcall(function()
         FishingController:RequestChargeFishingRod(CenterPosition, false)
     end)
     
-    -- Wait for the charge bar to appear
     local ChargeBar = PlayerGui:WaitForChild("Charge"):WaitForChild("Main"):WaitForChild("CanvasGroup"):WaitForChild("Bar")
     
     repeat
@@ -256,7 +245,6 @@ function castWithBarRelease()
     
     local StartTime = tick()
     
-    -- Wait for the bar to charge to ~93%
     while ChargeBar:IsDescendantOf(PlayerGui) and ChargeBar.Size.Y.Scale < 0.93 do
         task.wait()
         if tick() - StartTime > 2 then
@@ -264,15 +252,14 @@ function castWithBarRelease()
         end
     end
     
-    -- Release the mouse button
     if MouseReleaseCallback then
         pcall(MouseReleaseCallback)
     end
 end
 
--- Legit Fishing Function
 function StartLegitFishing(enabled)
     FishingController._autoLoop = enabled
+    FishingController._autoShake = enabled
     
     if enabled then
         task.spawn(function()
@@ -280,13 +267,11 @@ function StartLegitFishing(enabled)
             local CosmeticFolder = workspace:WaitForChild("CosmeticFolder")
             
             while FishingController._autoLoop do
-                -- Wait until not currently fishing
                 if not CosmeticFolder:FindFirstChild(UserId) then
                     castWithBarRelease()
                     task.wait(0.2)
                 end
                 
-                -- Wait while fishing
                 while CosmeticFolder:FindFirstChild(UserId) and FishingController._autoLoop do
                     task.wait(0.2)
                 end
@@ -294,15 +279,8 @@ function StartLegitFishing(enabled)
                 task.wait(0.2)
             end
         end)
-    end
-end
-
--- Auto Shake Function (spam click during fishing)
-function StartAutoShake(enabled)
-    FishingController._autoShake = enabled
-    local ClickEffect = LocalPlayer.PlayerGui:FindFirstChild("!!! Click Effect")
-    
-    if enabled then
+        
+        local ClickEffect = LocalPlayer.PlayerGui:FindFirstChild("!!! Click Effect")
         if ClickEffect then
             ClickEffect.Enabled = false
         end
@@ -315,62 +293,34 @@ function StartAutoShake(enabled)
                 task.wait(LegitShakeDelay)
             end
         end)
-    elseif ClickEffect then
-        ClickEffect.Enabled = true
+    else
+        local ClickEffect = LocalPlayer.PlayerGui:FindFirstChild("!!! Click Effect")
+        if ClickEffect then
+            ClickEffect.Enabled = true
+        end
     end
 end
 
--- Legit Fishing with Delay
-function StartLegitFishingWithDelay()
-    task.spawn(function()
-        print("Started Legit Fishing with Delay")
+fsh:AddToggle({
+    Title = "Legit Fishing",
+    Content = "",
+    Default = false,
+    Callback = function(enabled)
+        EquipToolFromHotbar:FireServer(1)
+            StartLegitFishing(enabled)
         
-        while not (FishingController and FishingController._autoLoop) do
-            task.wait(0.05)
+        local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+        local fishingGui = playerGui:WaitForChild("Fishing"):WaitForChild("Main")
+        
+        if enabled then
+            fishingGui.Visible = false
+        else
+            fishingGui.Visible = true
         end
-        
-        if not FishingController:GetCurrentGUID() then
-            -- Waiting for fishing to start
-        end
-        
-        print("Waiting", LegitDelay)
-        task.wait(LegitDelay)
-        
-        while true do
-            local success, error = pcall(function()
-                FishingCompleted:FireServer()
-            end)
-            
-            if success then
-                print("Successfully completed fishing")
-            else
-                warn("Failed to fire REFishDone:", error)
-            end
-            
-            task.wait(0.05)
-            
-            if not (FishingController:GetCurrentGUID() and FishingController._autoLoop) then
-                print("Fishing loop ended")
-                break
-            end
-        end
-    end)
-end
-
--- ========================================
--- UI ELEMENTS FOR LEGIT FISHING
--- ========================================
-
-fsh:AddParagraph({
-    Title = "Legit Fishing Info",
-    Content = "Auto fishing with bar release method. Works best with perfection enchant.",
-    Icon = "info",
+    end
 })
 
-fsh:AddDivider()
-
--- Main Legit Fishing Toggle
-fsh:AddToggle({
+--[[fsh:AddToggle({
     Title = "Legit Fishing",
     Content = "",
     Default = false,
@@ -404,129 +354,18 @@ fsh:AddToggle({
             })
         end
     end
-})
-
--- Legit Delay Input
-fsh:AddInput({
-    Title = "Legit Delay",
-    Content = "Delay before completing fishing",
-    Placeholder = "0.1",
-    Callback = function(value)
-        local delay = tonumber(value)
-        if delay and delay > 0 then
-            LegitDelay = delay
-            StartLegitFishingWithDelay()
-        else
-            warn("Invalid fishing delay input")
-        end
-    end
-})
-
--- Auto Shake Toggle
-fsh:AddToggle({
-    Title = "Auto Shake",
-    Content = "Spam click during fishing (only for legit)",
-    Default = false,
-    Callback = function(enabled)
-        StartAutoShake(enabled)
-        
-        if enabled then
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Auto Shake",
-                Content = "Enabled",
-                Delay = 2
-            })
-        else
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Auto Shake",
-                Content = "Disabled",
-                Delay = 2
-            })
-        end
-    end
-})
-
--- Shake Delay Input
-fsh:AddInput({
-    Title = "Shake Delay",
-    Content = "Delay between clicks (seconds)",
-    Placeholder = "0.05",
-    Callback = function(value)
-        local delay = tonumber(value)
-        if delay and delay >= 0 then
-            LegitShakeDelay = delay
-        end
-    end
-})
-
--- Anti Stuck for Legit Fishing
-_G.lastFishTime = tick()
-_G.STUCK_TIMEOUT = 5
-_G.AntiStuckEnabled = false
-
-REObtainedNewFishNotification.OnClientEvent:Connect(function()
-    _G.lastFishTime = tick()
-end)
-
-task.spawn(function()
-    while task.wait(1) do
-        if _G.AntiStuckEnabled then
-            if tick() - _G.lastFishTime > tonumber(_G.STUCK_TIMEOUT) then
-                StartLegitFishing(false)
-                task.wait(0.5)
-                StartLegitFishing(true)
-                _G.lastFishTime = tick()
-            end
-        end
-    end
-end)
-
-fsh:AddInput({
-    Title = "Anti Stuck Delay",
-    Content = "Enter delay in seconds.",
-    Placeholder = "5",
-    Callback = function(value)
-        _G.STUCK_TIMEOUT = value
-    end
-})
-
-fsh:AddToggle({
-    Title = "Anti Stuck",
-    Content = "Auto restart if fishing gets stuck.",
-    Default = false,
-    Callback = function(state)
-        _G.AntiStuckEnabled = state
-        
-        if state then
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Anti Stuck",
-                Content = "Enabled",
-                Delay = 2
-            })
-        else
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Anti Stuck",
-                Content = "Disabled",
-                Delay = 2
-            })
-        end
-    end
-})
+})]]
 
 fsh:AddButton({
     Title = "Manual Fix Stuck",
-    Content = "Manually stop fishing if stuck",
+    Content = "",
     Callback = function()
         StartLegitFishing(false)
         
         AIKO:MakeNotify({
             Title = "@aikoware",
-            Description = "| Manual Fix",
-            Content = "Fishing Stopped",
+            Description = "| Manual Fix Stuck",
+            Content = "Stuck Fixed",
             Delay = 2
         })
     end
@@ -534,12 +373,10 @@ fsh:AddButton({
 
 local fin = Fishing:AddSection("Instant")
 
--- Variables for Instant Fishing
 local InstantFishEnabled = false
 local InstantDelayComplete = 0.1
 _G.FishMiniData = _G.FishMiniData or {}
 
--- Mini Event Connection
 local MiniEvent = net:WaitForChild("RE/FishingMinigameChanged")
 if MiniEvent then
     if _G._MiniEventConn then
@@ -553,7 +390,6 @@ if MiniEvent then
     end)
 end
 
--- Instant Fishing Function
 local function StartInstantFishing(enabled)
     InstantFishEnabled = enabled
     
@@ -561,7 +397,6 @@ local function StartInstantFishing(enabled)
         task.spawn(function()
             while InstantFishEnabled do
                 pcall(function()
-                    -- Charge the fishing rod
                     local success, _, rodGUID = pcall(function()
                         return ChargeFishingRod:InvokeServer(workspace:GetServerTimeNow())
                     end)
@@ -572,12 +407,10 @@ local function StartInstantFishing(enabled)
                         
                         task.wait(0.3)
                         
-                        -- Start the minigame
                         pcall(function()
                             RequestFishingMinigame:InvokeServer(ProgressValue, SuccessRate, rodGUID)
                         end)
                         
-                        -- Wait for fish data
                         local WaitStart = tick()
                         repeat
                             task.wait()
@@ -585,19 +418,16 @@ local function StartInstantFishing(enabled)
                         
                         task.wait(InstantDelayComplete)
                         
-                        -- Complete fishing
                         pcall(function()
                             FishingCompleted:FireServer()
                         end)
                         
-                        -- Wait for fish count to increase
                         local CurrentCount = getFishCount()
                         local CountWaitStart = tick()
                         repeat
                             task.wait()
                         until CurrentCount < getFishCount() or tick() - CountWaitStart > 1
                         
-                        -- Cancel any ongoing fishing
                         pcall(function()
                             CancelFishingInputs:InvokeServer()
                         end)
@@ -614,7 +444,6 @@ function getFishCount()
     return tonumber((BagSizeLabel.Text or "0/???"):match("(%d+)/")) or 0
 end
 
--- UI Toggle for Instant Fishing
 fin:AddToggle({
     Title = "Instant Fishing",
     Content = "",
@@ -629,9 +458,8 @@ fin:AddToggle({
     end
 })
 
--- UI Input for Delay Complete
 fin:AddInput({
-    Title = "Delay Complete",
+    Title = "Complete Delay",
     Placeholder = "0.1",
     Callback = function(value)
         local delay = tonumber(value)
@@ -640,287 +468,6 @@ fin:AddInput({
         end
     end
 })
-
---[[ local fsh = Fishing:AddSection("Legit")
-
-_G.RunService = game:GetService("RunService")
-_G.FishingController = require(ReplicatedStorage.Controllers.FishingController)
-_G.AutoFishingController = require(ReplicatedStorage.Controllers.AutoFishingController)
-_G.Replion = require(ReplicatedStorage.Packages.Replion)
-
-_G.AutoFishState = {
-    IsActive = false,
-    MinigameActive = false
-}
-
-_G.SPEED_LEGIT = 0.05
-
-function _G.performClick()
-    _G.FishingController:RequestFishingMinigameClick()
-    task.wait(tonumber(_G.SPEED_LEGIT))
-end
-
-_G.originalAutoFishingStateChanged = _G.AutoFishingController.AutoFishingStateChanged
-function _G.forceActiveVisual(arg1)
-    _G.originalAutoFishingStateChanged(true)
-end
-
-_G.AutoFishingController.AutoFishingStateChanged = _G.forceActiveVisual
-
-function _G.ensureServerAutoFishingOn()
-    local replionData = _G.Replion.Client:WaitReplion("Data")
-    local currentAutoFishingState = replionData:GetExpect("AutoFishing")
-
-    if not currentAutoFishingState then
-        local Net = require(ReplicatedStorage.Packages.Net)
-        local UpdateAutoFishingRemote = Net:RemoteFunction("UpdateAutoFishingState")
-        pcall(function()
-            UpdateAutoFishingRemote:InvokeServer(true)
-        end)
-    end
-end
-
-_G.originalRodStarted = _G.FishingController.FishingRodStarted
-_G.originalFishingStopped = _G.FishingController.FishingStopped
-_G.clickThread = nil
-
-_G.FishingController.FishingRodStarted = function(self, arg1, arg2)
-    _G.originalRodStarted(self, arg1, arg2)
-
-    if _G.AutoFishState.IsActive and not _G.AutoFishState.MinigameActive then
-        _G.AutoFishState.MinigameActive = true
-
-        if _G.clickThread then
-            task.cancel(_G.clickThread)
-        end
-
-        _G.clickThread = task.spawn(function()
-            while _G.AutoFishState.IsActive and _G.AutoFishState.MinigameActive do
-                _G.performClick()
-            end
-        end)
-    end
-end
-
-_G.FishingController.FishingStopped = function(self, arg1)
-    _G.originalFishingStopped(self, arg1)
-
-    if _G.AutoFishState.MinigameActive then
-        _G.AutoFishState.MinigameActive = false
-        task.wait(1)
-        _G.ensureServerAutoFishingOn()
-    end
-end
-
-function _G.ToggleAutoClick(shouldActivate)
-    _G.AutoFishState.IsActive = shouldActivate
-
-    if shouldActivate then
-        _G.ensureServerAutoFishingOn()
-    else
-        if _G.clickThread then
-            task.cancel(_G.clickThread)
-            _G.clickThread = nil
-        end
-        _G.AutoFishState.MinigameActive = false
-    end
-end
-
-fsh:AddParagraph({
-    Title = "Legit Fishing Info",
-    Content = "Much better if you have a perfection enchant so when you're using this, the timing is always perfect.",
-    Icon = "info",
-})
-
-fsh:AddDivider()
-
-fsh:AddToggle({
-    Title = "Legit Fishing",
-    Content = "",
-    Default = false,
-    Callback = function(state)
-        equipRemote:FireServer(1)
-        _G.ToggleAutoClick(state)
-
-        local playerGui = LocalPlayer:WaitForChild("PlayerGui")
-        local fishingGui = playerGui:WaitForChild("Fishing"):WaitForChild("Main")
-        local chargeGui = playerGui:WaitForChild("Charge"):WaitForChild("Main")
-
-        if state then
-            fishingGui.Visible = false
-            chargeGui.Visible = false
-        else
-            fishingGui.Visible = true
-            chargeGui.Visible = true
-        end
-    end
-})
-
-local legitDELAY = fsh:AddInput({
-    Title = "Legit Fishing Delay",
-    Content = "",
-    Placeholder = "0.05",
-    Callback = function(value)
-        local delay = tonumber(value)
-        if delay and delay > 0 then
-            _G.SPEED_LEGIT = delay
-        end
-    end
-})
-
-_G.lastFishTime = tick()
-_G.STUCK_TIMEOUT = 5
-_G.AntiStuckEnabled = false
-
-REObtainedNewFishNotification.OnClientEvent:Connect(function()
-    _G.lastFishTime = tick()
-end)
-
-task.spawn(function()
-    while task.wait(1) do
-        if _G.AntiStuckEnabled then
-            if tick() - _G.lastFishTime > tonumber(_G.STUCK_TIMEOUT) then
-                StopInstantFish()
-                task.wait(0.5)
-                StartInstantFish()
-                _G.lastFishTime = tick()
-            end
-        end
-    end
-end)
-
-local stuckDELAY = fsh:AddInput({
-    Title = "Anti Stuck Delay",
-    Content = "Enter delay in seconds.",
-    Placeholder = "5",
-    Callback = function(value)
-        _G.STUCK_TIMEOUT = value
-    end
-})
-
-fsh:AddToggle({
-    Title = "Anti Stuck",
-    Content = "Auto restart if fishing gets stuck.",
-    Default = false,
-    Callback = function(state)
-        _G.AntiStuckEnabled = state
-    end
-})
-
-fsh:AddButton({
-    Title = "Manual Fix Stuck",
-    Content = "",
-    Callback = function()
-        RuntimeState.IsFishingNewMethod = false
-
-        StopAutoFish5X()
-
-        StopInstantFish()
-
-        _G.stopSpam()
-        _G.StopRecastSpam()
-
-        _G.StopFishing()
-
-        AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "| Manual Fix Stuck",
-            Content = "Fishing Stopped",
-            Delay = 2
-        })
-    end
-})
-
-local fin = Fishing:AddSection("Instant")
-
-local InstantFishEnabled = false
-local CancelDelay = 0.1
-local CompleteDelay = 1
-
-local function EquipFishingRod()
-    pcall(function()
-        EquipToolFromHotbar:FireServer(1)
-    end)
-end
-
-local function InstantFishCycle()
-    if InstantFishEnabled then
-        pcall(function()
-            ChargeFishingRod:InvokeServer(100)
-            RequestFishingMinigame:InvokeServer(-139.63796997070312, 0.9964792798079721)
-        end)
-        task.wait(CancelDelay)
-
-        pcall(function()
-            CancelFishingInputs:InvokeServer()
-        end)
-
-        if InstantFishEnabled then
-            pcall(function()
-                ChargeFishingRod:InvokeServer(1756863567.217075)
-                RequestFishingMinigame:InvokeServer(-139.63796997070312, 0.9964792798079721)
-            end)
-            task.wait(CompleteDelay)
-
-            pcall(function()
-                FishingCompleted:FireServer()
-            end)
-            task.spawn(InstantFishCycle)
-        end
-    end
-end
-
-local function StartInstantFish()
-    if not InstantFishEnabled then
-        InstantFishEnabled = true
-        EquipFishingRod()
-        task.wait(0.5)
-        task.spawn(InstantFishCycle)
-    end
-end
-
-local function StopInstantFish()
-    InstantFishEnabled = false
-end
-
-fin:AddToggle({
-    Title = "Instant Fishing",
-    Content = "",
-    Default = false,
-    Callback = function(enabled)
-        if enabled then
-            StartInstantFish()
-        else
-            StopInstantFish()
-        end
-    end
-})
-
-local CompleteDelayInput = fin:AddInput({
-    Title = "Delay",
-    Placeholder = "1",
-    Callback = function(value)
-        local delay = tonumber(value)
-        if delay and delay > 0 then
-            CompleteDelay = delay
-        elseif CompleteDelayInput then
-            CompleteDelayInput:Set(tostring(CompleteDelay))
-        end
-    end
-})
-
-local SuperCompleteDelayInput = fin:AddInput({
-    Title = "Cancel Delay",
-    Placeholder = "0.1",
-    Callback = function(value)
-        local delay = tonumber(value)
-        if delay and delay > 0 then
-            CancelDelay = delay
-        elseif CancelDelayInput then
-            CancelDelayInput:Set(tostring(CancelDelay))
-        end
-    end
-})]]
 
 local bts = Fishing:AddSection("Blatant")
 
