@@ -1909,14 +1909,6 @@ local godmodez = fun:AddToggle({
     end
 })
 
-fun:AddButton({
-    Title = "Auto Days Farm",
-    Content = "Just afk and let the script do everything.",
-    Callback = function()
-        FunModule.LoadAutoDaysFarm()
-    end
-})
-
 local env = Vision:AddSection("Graphics")
 
 local disablenight = env:AddToggle({
