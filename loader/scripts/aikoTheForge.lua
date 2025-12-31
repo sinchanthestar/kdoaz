@@ -1245,15 +1245,13 @@ local AutoForgeAPI = nil
 
 local ForgeSection = Tabs.AutoForge:AddSection("Auto Forge")
 
--- Try to load the external module
 local success, module = pcall(function()
-    return loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/autoforge.lua"))()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/xzc/theforge/frgmdl.lua"))()
 end)
 
 if success and module then
     AutoForgeAPI = module
     
-    -- Initialize the module with required services
     module.Initialize({
         PlayerGui = PlayerGui,
         LocalPlayer = LocalPlayer,
