@@ -1,6 +1,8 @@
 local TweenService = game:GetService("TweenService")
 local CollectionService = game:GetService("CollectionService")
 
+local G2L = {}
+
 G2L["ScreenGui_1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
 G2L["ScreenGui_1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling
 G2L["ScreenGui_1"]["IgnoreGuiInset"] = true
@@ -11,7 +13,7 @@ DarkBG.Name = "DarkBackground"
 DarkBG.Size = UDim2.new(1, 0, 1, 0)
 DarkBG.Position = UDim2.new(0, 0, 0, 0)
 DarkBG.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-DarkBG.BackgroundTransparency = 0.5  -- Semi-transparent dark overlay
+DarkBG.BackgroundTransparency = 0.5
 DarkBG.BorderSizePixel = 0
 DarkBG.ZIndex = 1
 
@@ -114,7 +116,7 @@ LogoFrame["ZIndex"] = 3
 local LogoImage = Instance.new("ImageLabel", LogoFrame)
 LogoImage["BackgroundTransparency"] = 1
 LogoImage["Size"] = UDim2.new(1, 0, 1, 0)
-LogoImage["Image"] = "rbxassetid://105338847670181"  -- Replace with your logo
+LogoImage["Image"] = "rbxassetid://105338847670181"
 LogoImage["ScaleType"] = Enum.ScaleType.Fit
 LogoImage["Name"] = "LogoImage"
 LogoImage["ZIndex"] = 3
@@ -168,6 +170,8 @@ G2L["TextLabel_8"]["TextXAlignment"] = Enum.TextXAlignment.Center
 G2L["TextLabel_8"]["TextWrapped"] = true
 G2L["TextLabel_8"]["TextYAlignment"] = Enum.TextYAlignment.Top
 G2L["TextLabel_8"]["ZIndex"] = 3
+
+local Day = game.Players.LocalPlayer.PlayerGui.Interface.DayCounter
 
 G2L["TextLabel2_7"] = Instance.new("TextLabel", G2L["Frame_2"])
 G2L["TextLabel2_7"]["BorderSizePixel"] = 0
@@ -243,6 +247,40 @@ G2L["UnloadButton"].MouseButton1Up:Connect(function()
     }):Play()
 end)
 
+-- UNLOAD BUTTON FUNCTIONALITY
+G2L["UnloadButton"].MouseButton1Click:Connect(function()
+    -- Stop all farming toggles
+    _G.GodModeToggle = false
+    if _G.killAuraToggle ~= nil then _G.killAuraToggle = false end
+    if _G.chopAuraToggle ~= nil then _G.chopAuraToggle = false end
+    if _G.autoCookEnabled ~= nil then _G.autoCookEnabled = false end
+    if _G.autoFeedToggle ~= nil then _G.autoFeedToggle = false end
+    if _G.scanning ~= nil then _G.scanning = false end
+    
+    -- Unanchor the player
+    local lp = game.Players.LocalPlayer
+    if lp and lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+        lp.Character.HumanoidRootPart.Anchored = false
+    end
+    
+    -- Animate the UI out
+    TweenService:Create(G2L["Frame_2"], TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 0, 0, 0)
+    }):Play()
+    
+    TweenService:Create(DarkBG, TweenInfo.new(0.3), {
+        BackgroundTransparency = 1
+    }):Play()
+    
+    -- Wait for animation, then destroy
+    task.wait(0.3)
+    
+    if G2L["ScreenGui_1"] then
+        G2L["ScreenGui_1"]:Destroy()
+    end
+end)
+
+-- Glow animation loop
 task.spawn(function()
     while true do
         TweenService:Create(Glow, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
@@ -256,6 +294,7 @@ task.spawn(function()
     end
 end)
 
+-- Timer counter
 local count = 0
 task.spawn(function()
     while task.wait(1) do
@@ -274,6 +313,7 @@ task.spawn(function()
     end
 end)
 
+-- Day counter update
 local function updateText()
     G2L["TextLabel2_7"].Text = Day.Text
 end
