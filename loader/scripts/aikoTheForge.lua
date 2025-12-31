@@ -8,29 +8,79 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local ContextActionService = game:GetService("ContextActionService")
 local LocalPlayer = Players.LocalPlayer or Players.PlayerAdded:Wait()
 
---[[local Shared = ReplicatedStorage:WaitForChild("Shared")
-local Packages = Shared:WaitForChild("Packages")
-local Knit = Packages:WaitForChild("Knit")
-local Services = Knit:WaitForChild("Services")
+local function waitForChild(parent, childName, timeout)
+    local startTime = tick()
+    timeout = timeout or 10
+    
+    while not parent:FindFirstChild(childName) do
+        if tick() - startTime > timeout then
+            warn("Timeout waiting for:", childName)
+            return nil
+        end
+        task.wait(0.1)
+    end
+    
+    return parent:FindFirstChild(childName)
+end
 
-local ToolService = Services:WaitForChild("ToolService")
-local ToolServiceRF = ToolService:WaitForChild("RF")
-local StartBlock = ToolServiceRF:WaitForChild("StartBlock")
-local StopBlock = ToolServiceRF:WaitForChild("StopBlock")
+print("Waiting for game to load...")
 
-local InventoryService = Services:WaitForChild("InventoryService")
-local InventoryRF = InventoryService:WaitForChild("RF")
-local UseItems = InventoryRF:WaitForChild("UseItems")
+local Shared = waitForChild(ReplicatedStorage, "Shared", 15)
+if not Shared then
+    warn("Failed to find Shared folder in ReplicatedStorage")
+    return
+end
 
-local ProximityService = Services:WaitForChild("ProximityService")
-local ProximityRF = ProximityService:WaitForChild("RF")
-local Dialogue = ProximityRF:WaitForChild("Dialogue")
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-local Forge = PlayerGui:WaitForChild("Forge")
-local MeltMinigame = Forge:WaitForChild("MeltMinigame")
-local PourMinigame = Forge:WaitForChild("PourMinigame")
-local HammerMinigame = Forge:WaitForChild("HammerMinigame")
-]]
+local Packages = waitForChild(Shared, "Packages", 10)
+if not Packages then
+    warn("Failed to find Packages folder")
+    return
+end
+
+local Knit = waitForChild(Packages, "Knit", 10)
+if not Knit then
+    warn("Failed to find Knit framework")
+    return
+end
+
+local Services = waitForChild(Knit, "Services", 10)
+if not Services then
+    warn("Failed to find Services folder")
+    return
+end
+
+local ToolService = waitForChild(Services, "ToolService", 5)
+local InventoryService = waitForChild(Services, "InventoryService", 5)
+local ProximityService = waitForChild(Services, "ProximityService", 5)
+
+if not ToolService or not InventoryService or not ProximityService then
+    warn("One or more required services not found!")
+    return
+end
+
+local ToolServiceRF = waitForChild(ToolService, "RF", 5)
+local StartBlock = ToolServiceRF and waitForChild(ToolServiceRF, "StartBlock", 5)
+local StopBlock = ToolServiceRF and waitForChild(ToolServiceRF, "StopBlock", 5)
+
+local InventoryRF = waitForChild(InventoryService, "RF", 5)
+local UseItems = InventoryRF and waitForChild(InventoryRF, "UseItems", 5)
+
+local ProximityRF = waitForChild(ProximityService, "RF", 5)
+local Dialogue = ProximityRF and waitForChild(ProximityRF, "Dialogue", 5)
+
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui", 10)
+if not PlayerGui then
+    warn("Failed to find PlayerGui")
+    return
+end
+
+local Forge = waitForChild(PlayerGui, "Forge", 5)
+local MeltMinigame = Forge and waitForChild(Forge, "MeltMinigame", 5)
+local PourMinigame = Forge and waitForChild(Forge, "PourMinigame", 5)
+local HammerMinigame = Forge and waitForChild(Forge, "HammerMinigame", 5)
+
+print("All game services loaded successfully!")
+
 local AutoMineEnabled = false
 local RockTypes = {}
 local MineDistance = 6
@@ -875,7 +925,7 @@ local Window = AIKO:Window({
 local Tabs = {
     Info = Window:AddTab({ Name = "Home", Icon = "home" }),
     MainFarm = Window:AddTab({ Name = "Main", Icon = "sword" }),
-    -- AutoForge = Window:AddTab({ Name = "Forge", Icon = "hammer" }),
+    AutoForge = Window:AddTab({ Name = "Forge", Icon = "hammer" }),
     Auto = Window:AddTab({ Name = "Auto", Icon = "loop" }),
     AutoSell = Window:AddTab({ Name = "Sell", Icon = "shop" }),
     Webhook = Window:AddTab({ Name = "Webhook", Icon = "bell" }),
@@ -1191,7 +1241,7 @@ task.spawn(function()
     end
 end)
 
---[[local AutoForgeAPI = nil
+local AutoForgeAPI = nil
 
 local ForgeSection = Tabs.AutoForge:AddSection("Auto Forge")
 
@@ -1299,7 +1349,7 @@ else
         Content = "Failed to load Auto Forge module",
         Icon = "alert-triangle"
     })
-end]]
+end
 
 local oreOptions = buildOreOptions()
 
