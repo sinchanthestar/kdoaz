@@ -155,6 +155,248 @@ local currentInvOptions = {
 local InvDropdown
 local autoMovementRunning = false
 
+local AutoForgeModule = {}
+
+local autoForge = {
+				enabled = false,
+				autoMelt = false,
+				autoPour = false,
+				autoHammer = false,
+				autoMold = false,
+				itemType = "Weapon",
+				selectedOres = {},
+				totalOresPerForge = 3,
+}
+
+local services = {}
+
+local function getInventoryFromUI()
+				local inv = {}
+				if not services.LocalPlayer then return inv end
+				local pg = services.LocalPlayer:FindFirstChild("PlayerGui")
+				if not pg then return inv end
+				local menu = pg:FindFirstChild("Menu")
+				if not menu then return inv end
+				local frame1 = menu:FindFirstChild("Frame")
+				if not frame1 then return inv end
+				local frame2 = frame1:FindFirstChild("Frame")
+				if not frame2 then return inv end
+				local menus = frame2:FindFirstChild("Menus")
+				if not menus then return inv end
+				local stash = menus:FindFirstChild("Stash")
+				if not stash then return inv end
+				local container = stash:FindFirstChild("Background") or stash
+				for _, itemFrame in ipairs(container:GetChildren()) do
+								if itemFrame:IsA("GuiObject") then
+												local main = itemFrame:FindFirstChild("Main")
+												if main then
+																local nameLbl = main:FindFirstChild("ItemName")
+																local qtyLbl = main:FindFirstChild("Quantity")
+																if nameLbl and qtyLbl and nameLbl:IsA("TextLabel") and qtyLbl:IsA("TextLabel") then
+																				local name = nameLbl.Text
+																				local qtyStr = qtyLbl.Text
+																				local qty = tonumber(qtyStr:match("%d+")) or 0
+																				if name and name ~= "" and qty > 0 then
+																								inv[name] = qty
+																				end
+																end
+												end
+								end
+				end
+				return inv
+end
+
+local function buildForgeOreOptions(rs)
+				local names = {}
+				if not rs then return names end
+				local assets = rs:FindFirstChild("Assets")
+				local oresFolder = assets and assets:FindFirstChild("Ores")
+				if oresFolder then
+								for _, ore in ipairs(oresFolder:GetChildren()) do
+												if ore.Name and ore.Name ~= "" then
+																table.insert(names, ore.Name)
+												end
+								end
+				end
+				table.sort(names)
+				return names
+end
+
+local function startAutoMelt()
+				task.spawn(function()
+								while autoForge.autoMelt and autoForge.enabled do
+												pcall(function()
+																if services.MeltMinigame and services.MeltMinigame.Enabled then
+																				local frame = services.MeltMinigame:FindFirstChild("Frame")
+																				local bar = frame and frame:FindFirstChild("Bar")
+																				local indicator = bar and bar:FindFirstChild("Indicator")
+																				local button = bar and bar:FindFirstChild("TextButton")
+																				if indicator and button and indicator.Position then
+																								local pos = indicator.Position.X.Scale
+																								if pos >= 0.45 and pos <= 0.55 then
+																												for i = 1, 15 do
+																																button.MouseButton1Click:Fire()
+																												end
+																								end
+																				end
+																end
+												end)
+												task.wait(0.01)
+								end
+				end)
+end
+
+local function startAutoPour()
+				task.spawn(function()
+								while autoForge.autoPour and autoForge.enabled do
+												pcall(function()
+																if services.PourMinigame and services.PourMinigame.Enabled then
+																				local frame = services.PourMinigame:FindFirstChild("Frame")
+																				local container = frame and frame:FindFirstChild("Container")
+																				local indicator = container and container:FindFirstChild("Indicator")
+																				if indicator and indicator.Position and services.StartBlock and services.StopBlock then
+																								local pos = indicator.Position.Y.Scale
+																								if pos < 0.05 then
+																												services.StartBlock:InvokeServer()
+																								elseif pos > 0.9 then
+																												services.StopBlock:InvokeServer()
+																								end
+																				end
+																end
+												end)
+												task.wait(0.01)
+								end
+				end)
+end
+
+local function startAutoHammer()
+				task.spawn(function()
+								while autoForge.autoHammer and autoForge.enabled do
+												pcall(function()
+																if services.HammerMinigame and services.HammerMinigame.Enabled then
+																				local frame = services.HammerMinigame:FindFirstChild("Frame")
+																				local bar = frame and frame:FindFirstChild("Bar")
+																				local indicator = bar and bar:FindFirstChild("Indicator")
+																				local button = bar and bar:FindFirstChild("TextButton")
+																				if indicator and button and indicator.Position then
+																								local pos = indicator.Position.X.Scale
+																								if pos >= 0.45 and pos <= 0.55 then
+																												button.MouseButton1Click:Fire()
+																								end
+																				end
+																end
+												end)
+												task.wait(0.01)
+								end
+				end)
+end
+
+local function startAutoMold()
+				task.spawn(function()
+								while autoForge.autoMold and autoForge.enabled do
+												pcall(function()
+																if not services.LocalPlayer then return end
+																local char = services.LocalPlayer.Character
+																if char then
+																				local hrp = char:FindFirstChild("HumanoidRootPart")
+																				if hrp then
+																								local proximity = workspace:FindFirstChild("Proximity")
+																								if proximity then
+																												local mold = proximity:FindFirstChild("Mold")
+																												if mold then
+																																local moldRoot = mold:FindFirstChild("HumanoidRootPart") or mold.PrimaryPart
+																																if moldRoot and services.Dialogue then
+																																				local dist = (hrp.Position - moldRoot.Position).Magnitude
+																																				if dist < 10 then
+																																								services.Dialogue:InvokeServer("Mold", {ItemType = autoForge.itemType})
+																																				end
+																																end
+																												end
+																								end
+																				end
+																end
+												end)
+												task.wait(1)
+								end
+				end)
+end
+
+local function startAutoForge()
+				task.spawn(function()
+								while autoForge.enabled do
+												pcall(function()
+																if #autoForge.selectedOres > 0 then
+																				local inv = getInventoryFromUI()
+																				local oreBasket = {}
+																				local totalOres = 0
+																				for _, oreName in ipairs(autoForge.selectedOres) do
+																								if inv[oreName] then
+																												local useAmount = math.min(inv[oreName], autoForge.totalOresPerForge - totalOres)
+																												if useAmount > 0 then
+																																oreBasket[oreName] = useAmount
+																																totalOres = totalOres + useAmount
+																												end
+																												if totalOres >= autoForge.totalOresPerForge then
+																																break
+																												end
+																								end
+																				end
+																				if totalOres >= autoForge.totalOresPerForge and services.UseItems then
+																								services.UseItems:InvokeServer(oreBasket)
+																								task.wait(2)
+																				end
+																end
+												end)
+												task.wait(2)
+								end
+				end)
+end
+
+function AutoForgeModule.Initialize(svc)
+				services = svc or {}
+end
+
+function AutoForgeModule.GetOreOptions(rs)
+				return buildForgeOreOptions(rs)
+end
+
+function AutoForgeModule.SetItemType(itemType)
+				autoForge.itemType = itemType or "Weapon"
+end
+
+function AutoForgeModule.SetSelectedOres(ores)
+				autoForge.selectedOres = ores or {}
+end
+
+function AutoForgeModule.SetOresPerForge(amount)
+				autoForge.totalOresPerForge = tonumber(amount) or 3
+end
+
+function AutoForgeModule.EnableAutoMelt(enabled)
+				autoForge.autoMelt = enabled
+				if enabled then startAutoMelt() end
+end
+
+function AutoForgeModule.EnableAutoPour(enabled)
+				autoForge.autoPour = enabled
+				if enabled then startAutoPour() end
+end
+
+function AutoForgeModule.EnableAutoHammer(enabled)
+				autoForge.autoHammer = enabled
+				if enabled then startAutoHammer() end
+end
+
+function AutoForgeModule.EnableAutoMold(enabled)
+				autoForge.autoMold = enabled
+				if enabled then startAutoMold() end
+end
+
+function AutoForgeModule.EnableAutoForge(enabled)
+				autoForge.enabled = enabled
+				if enabled then startAutoForge() end
+end
+
 local function getCharacter()
     return LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 end
@@ -1241,148 +1483,135 @@ task.spawn(function()
     end
 end)
 
-local AutoForgeAPI = nil
+local AutoForgeAPI = AutoForgeModule
 
 local ForgeSection = Tabs.AutoForge:AddSection("Auto Forge")
 
-local success, module = pcall(function()
-    return loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/xzc/theforge/frgmdl.lua"))()
-end)
+AutoForgeModule.Initialize({
+				PlayerGui = PlayerGui,
+				LocalPlayer = LocalPlayer,
+				ReplicatedStorage = ReplicatedStorage,
+				UseItems = UseItems,
+				Dialogue = Dialogue,
+				StartBlock = StartBlock,
+				StopBlock = StopBlock,
+				MeltMinigame = MeltMinigame,
+				PourMinigame = PourMinigame,
+				HammerMinigame = HammerMinigame,
+})
 
-if success and module then
-    AutoForgeAPI = module
-    
-    module.Initialize({
-        PlayerGui = PlayerGui,
-        LocalPlayer = LocalPlayer,
-        ReplicatedStorage = ReplicatedStorage,
-        UseItems = UseItems,
-        Dialogue = Dialogue,
-        StartBlock = StartBlock,
-        StopBlock = StopBlock,
-        MeltMinigame = MeltMinigame,
-        PourMinigame = PourMinigame,
-        HammerMinigame = HammerMinigame,
-    })
-    
-    local forgeOreOptions = module.GetOreOptions(ReplicatedStorage)
-    
-    ForgeSection:AddDropdown({
-        Title = "Item Type",
-        Content = "Weapon or Armor",
-        Options = { "Weapon", "Armor" },
-        Default = "Weapon",
-        Callback = function(v)
-            module.SetItemType(v)
-        end
-    })
+local forgeOreOptions = AutoForgeModule.GetOreOptions(ReplicatedStorage)
 
-    ForgeSection:AddDropdown({
-        Title = "Select Ores",
-        Content = "Ores to use for forging",
-        Multi = true,
-        Options = forgeOreOptions,
-        Default = {},
-        Callback = function(opts)
-            if type(opts) == "table" and #opts > 0 then
-                module.SetSelectedOres(opts)
-            end
-        end
-    })
+ForgeSection:AddDropdown({
+				Title = "Item Type",
+				Content = "Weapon or Armor",
+				Options = { "Weapon", "Armor" },
+				Default = "Weapon",
+				Callback = function(v)
+								AutoForgeModule.SetItemType(v)
+				end
+})
 
-    ForgeSection:AddSlider({
-        Title = "Ores Per Forge",
-        Content = "Number of ores to use",
-        Min = 1,
-        Max = 10,
-        Increment = 1,
-        Default = 3,
-        Callback = function(value)
-            module.SetOresPerForge(math.floor(value))
-        end
-    })
+ForgeSection:AddDropdown({
+				Title = "Select Ores",
+				Content = "Ores to use for forging",
+				Multi = true,
+				Options = forgeOreOptions,
+				Default = {},
+				Callback = function(opts)
+								if type(opts) == "table" and #opts > 0 then
+												AutoForgeModule.SetSelectedOres(opts)
+								end
+				end
+})
 
-    local MinigameSection = Tabs.AutoForge:AddSection("Minigame Automation")
+ForgeSection:AddSlider({
+				Title = "Ores Per Forge",
+				Content = "Number of ores to use",
+				Min = 1,
+				Max = 10,
+				Increment = 1,
+				Default = 3,
+				Callback = function(value)
+								AutoForgeModule.SetOresPerForge(math.floor(value))
+				end
+})
 
-    MinigameSection:AddToggle({
-        Title = "Auto Melt",
-        Content = "Automatically complete melt minigame",
-        Default = false,
-        Callback = function(v)
-            module.EnableAutoMelt(v)
-            if v then
-                aiko("Auto melt enabled!")
-            else
-                aiko("Auto melt disabled")
-            end
-        end
-    })
+local MinigameSection = Tabs.AutoForge:AddSection("Minigame Automation")
 
-    MinigameSection:AddToggle({
-        Title = "Auto Pour",
-        Content = "Automatically complete pour minigame",
-        Default = false,
-        Callback = function(v)
-            module.EnableAutoPour(v)
-            if v then
-                aiko("Auto pour enabled!")
-            else
-                aiko("Auto pour disabled")
-            end
-        end
-    })
+MinigameSection:AddToggle({
+				Title = "Auto Melt",
+				Content = "Automatically complete melt minigame",
+				Default = false,
+				Callback = function(v)
+								AutoForgeModule.EnableAutoMelt(v)
+								if v then
+												aiko("Auto melt enabled!")
+								else
+												aiko("Auto melt disabled")
+								end
+				end
+})
 
-    MinigameSection:AddToggle({
-        Title = "Auto Hammer",
-        Content = "Automatically complete hammer minigame",
-        Default = false,
-        Callback = function(v)
-            module.EnableAutoHammer(v)
-            if v then
-                aiko("Auto hammer enabled!")
-            else
-                aiko("Auto hammer disabled")
-            end
-        end
-    })
+MinigameSection:AddToggle({
+				Title = "Auto Pour",
+				Content = "Automatically complete pour minigame",
+				Default = false,
+				Callback = function(v)
+								AutoForgeModule.EnableAutoPour(v)
+								if v then
+												aiko("Auto pour enabled!")
+								else
+												aiko("Auto pour disabled")
+								end
+				end
+})
 
-    MinigameSection:AddToggle({
-        Title = "Auto Mold",
-        Content = "Automatically interact with mold",
-        Default = false,
-        Callback = function(v)
-            module.EnableAutoMold(v)
-            if v then
-                aiko("Auto mold enabled!")
-            else
-                aiko("Auto mold disabled")
-            end
-        end
-    })
+MinigameSection:AddToggle({
+				Title = "Auto Hammer",
+				Content = "Automatically complete hammer minigame",
+				Default = false,
+				Callback = function(v)
+								AutoForgeModule.EnableAutoHammer(v)
+								if v then
+												aiko("Auto hammer enabled!")
+								else
+												aiko("Auto hammer disabled")
+								end
+				end
+})
 
-    ForgeSection:AddDivider()
+MinigameSection:AddToggle({
+				Title = "Auto Mold",
+				Content = "Automatically interact with mold",
+				Default = false,
+				Callback = function(v)
+								AutoForgeModule.EnableAutoMold(v)
+								if v then
+												aiko("Auto mold enabled!")
+								else
+												aiko("Auto mold disabled")
+								end
+				end
+})
 
-    ForgeSection:AddToggle({
-        Title = "Enable Auto Forge",
-        Content = "Start automatic forging process",
-        Default = false,
-        Callback = function(v)
-            module.EnableAutoForge(v)
-            if v then
-                aiko("Auto forge started!")
-            else
-                aiko("Auto forge stopped")
-            end
-        end
-    })
-else
-    ForgeSection:AddParagraph({
-        Title = "Error",
-        Content = "Failed to load Auto Forge module: " .. tostring(module or "Unknown error"),
-        Icon = "alert-triangle"
-    })
-    warn("Auto Forge module failed to load:", module)
-end
+ForgeSection:AddDivider()
+
+ForgeSection:AddToggle({
+				Title = "Enable Auto Forge",
+				Content = "Start automatic forging process",
+				Default = false,
+				Callback = function(v)
+								AutoForgeModule.EnableAutoForge(v)
+								if v then
+												aiko("Auto forge started!")
+								else
+												aiko("Auto forge stopped")
+								end
+				end
+})
+
+return AutoForgeModule
 
 local oreOptions = buildOreOptions()
 
