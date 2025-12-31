@@ -1450,8 +1450,8 @@ end
 
 AutoSellSection:AddParagraph({
     Title = "Auto Sell Info",
-    Icon = "info",
-    Content = "You need to interact with Greedy Cey first to work."
+    Content = "You need to interact with Greedy Cey first to work.",
+    Icon = "info"
 })
 
 AutoSellSection:AddDropdown({
