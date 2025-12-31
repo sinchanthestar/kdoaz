@@ -1611,7 +1611,7 @@ smp:AddSlider({
     Increment = 10,
     Min = 50,
     Max = 500,
-    Default = 100
+    Default = 100,
     Callback = function(value)
         scanSpeed = value
     end
@@ -1619,10 +1619,10 @@ smp:AddSlider({
 
 smp:AddSlider({
     Title = "Scan Radius",
-    Increment = 1
+    Increment = 1,
     Min = 1,
     Max = 100,
-    Default = 15
+    Default = 15,
     Callback = function(value)
         scanRadiusStep = value
     end
@@ -1633,7 +1633,7 @@ smp:AddSlider({
     Increment = 1,
     Min = 1,
     Max = 90,
-    Default = 10
+    Default = 10,
     Callback = function(value)
         scanAngleStep = math.rad(value)
     end
