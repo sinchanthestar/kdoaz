@@ -1196,7 +1196,7 @@ local AutoForgeAPI = nil
 local ForgeSection = Tabs.AutoForge:AddSection("Auto Forge")
 
 local success, module = pcall(function()
-    return loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/xzc/theforge/frgmdl.lua"))()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/autoforge.lua"))()
 end)
 
 if success and module then
@@ -1250,7 +1250,7 @@ if success and module then
         end
     })
 
-    local MinigameSection = ForgeSection:AddSection("Minigame Automation")
+    local MinigameSection = Tabs.AutoForge:AddSection("Minigame Automation")
 
     MinigameSection:AddToggle({
         Title = "Auto Melt",
