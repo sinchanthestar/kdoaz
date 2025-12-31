@@ -6,24 +6,16 @@ local G2L = {}
 G2L["ScreenGui_1"] = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
 G2L["ScreenGui_1"]["ZIndexBehavior"] = Enum.ZIndexBehavior.Sibling
 G2L["ScreenGui_1"]["IgnoreGuiInset"] = true
+G2L["ScreenGui_1"]["ResetOnSpawn"] = false
 CollectionService:AddTag(G2L["ScreenGui_1"], "main")
-
-local DarkBG = Instance.new("Frame", G2L["ScreenGui_1"])
-DarkBG.Name = "DarkBackground"
-DarkBG.Size = UDim2.new(1, 0, 1, 0)
-DarkBG.Position = UDim2.new(0, 0, 0, 0)
-DarkBG.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-DarkBG.BackgroundTransparency = 0.5
-DarkBG.BorderSizePixel = 0
-DarkBG.ZIndex = 1
 
 G2L["Frame_2"] = Instance.new("Frame", G2L["ScreenGui_1"])
 G2L["Frame_2"]["BorderSizePixel"] = 0
-G2L["Frame_2"]["BackgroundColor3"] = Color3.fromRGB(15, 15, 15)
+G2L["Frame_2"]["BackgroundColor3"] = Color3.fromRGB(0, 0, 0)
 G2L["Frame_2"]["Size"] = UDim2.new(0, 350, 0, 450)
 G2L["Frame_2"]["Position"] = UDim2.new(0.5, -175, 0.5, -225)
 G2L["Frame_2"]["AnchorPoint"] = Vector2.new(0.5, 0.5)
-G2L["Frame_2"]["BackgroundTransparency"] = 0.1
+G2L["Frame_2"]["BackgroundTransparency"] = 0.4
 G2L["Frame_2"]["ZIndex"] = 2
 
 G2L["UICorner_3"] = Instance.new("UICorner", G2L["Frame_2"])
@@ -266,10 +258,6 @@ G2L["UnloadButton"].MouseButton1Click:Connect(function()
     -- Animate the UI out
     TweenService:Create(G2L["Frame_2"], TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
         Size = UDim2.new(0, 0, 0, 0)
-    }):Play()
-    
-    TweenService:Create(DarkBG, TweenInfo.new(0.3), {
-        BackgroundTransparency = 1
     }):Play()
     
     -- Wait for animation, then destroy
