@@ -1608,9 +1608,10 @@ ForgeSection:AddToggle({
 												aiko("Auto forge stopped")
 								end
 				end
-})]]
+})
 
 local oreOptions = buildOreOptions()
+]]
 
 local mobOptions = buildMobOptions()
 if # mobOptions == 0 then
