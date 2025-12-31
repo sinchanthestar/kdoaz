@@ -168,12 +168,12 @@ local autoForge = {
 				totalOresPerForge = 3,
 }
 
-local services = {}
+local forgeServices = {}
 
 local function getInventoryFromUI()
 				local inv = {}
-				if not services.LocalPlayer then return inv end
-				local pg = services.LocalPlayer:FindFirstChild("PlayerGui")
+				if not forgeServices.LocalPlayer then return inv end
+				local pg = forgeServices.LocalPlayer:FindFirstChild("PlayerGui")
 				if not pg then return inv end
 				local menu = pg:FindFirstChild("Menu")
 				if not menu then return inv end
@@ -226,8 +226,8 @@ local function startAutoMelt()
 				task.spawn(function()
 								while autoForge.autoMelt and autoForge.enabled do
 												pcall(function()
-																if services.MeltMinigame and services.MeltMinigame.Enabled then
-																				local frame = services.MeltMinigame:FindFirstChild("Frame")
+																if forgeServices.MeltMinigame and forgeServices.MeltMinigame.Enabled then
+																				local frame = forgeServices.MeltMinigame:FindFirstChild("Frame")
 																				local bar = frame and frame:FindFirstChild("Bar")
 																				local indicator = bar and bar:FindFirstChild("Indicator")
 																				local button = bar and bar:FindFirstChild("TextButton")
@@ -250,16 +250,16 @@ local function startAutoPour()
 				task.spawn(function()
 								while autoForge.autoPour and autoForge.enabled do
 												pcall(function()
-																if services.PourMinigame and services.PourMinigame.Enabled then
-																				local frame = services.PourMinigame:FindFirstChild("Frame")
+																if forgeServices.PourMinigame and forgeServices.PourMinigame.Enabled then
+																				local frame = forgeServices.PourMinigame:FindFirstChild("Frame")
 																				local container = frame and frame:FindFirstChild("Container")
 																				local indicator = container and container:FindFirstChild("Indicator")
-																				if indicator and indicator.Position and services.StartBlock and services.StopBlock then
+																				if indicator and indicator.Position and forgeServices.StartBlock and forgeServices.StopBlock then
 																								local pos = indicator.Position.Y.Scale
 																								if pos < 0.05 then
-																												services.StartBlock:InvokeServer()
+																												forgeServices.StartBlock:InvokeServer()
 																								elseif pos > 0.9 then
-																												services.StopBlock:InvokeServer()
+																												forgeServices.StopBlock:InvokeServer()
 																								end
 																				end
 																end
@@ -273,8 +273,8 @@ local function startAutoHammer()
 				task.spawn(function()
 								while autoForge.autoHammer and autoForge.enabled do
 												pcall(function()
-																if services.HammerMinigame and services.HammerMinigame.Enabled then
-																				local frame = services.HammerMinigame:FindFirstChild("Frame")
+																if forgeServices.HammerMinigame and forgeServices.HammerMinigame.Enabled then
+																				local frame = forgeServices.HammerMinigame:FindFirstChild("Frame")
 																				local bar = frame and frame:FindFirstChild("Bar")
 																				local indicator = bar and bar:FindFirstChild("Indicator")
 																				local button = bar and bar:FindFirstChild("TextButton")
@@ -295,8 +295,8 @@ local function startAutoMold()
 				task.spawn(function()
 								while autoForge.autoMold and autoForge.enabled do
 												pcall(function()
-																if not services.LocalPlayer then return end
-																local char = services.LocalPlayer.Character
+																if not forgeServices.LocalPlayer then return end
+																local char = forgeServices.LocalPlayer.Character
 																if char then
 																				local hrp = char:FindFirstChild("HumanoidRootPart")
 																				if hrp then
@@ -305,10 +305,10 @@ local function startAutoMold()
 																												local mold = proximity:FindFirstChild("Mold")
 																												if mold then
 																																local moldRoot = mold:FindFirstChild("HumanoidRootPart") or mold.PrimaryPart
-																																if moldRoot and services.Dialogue then
+																																if moldRoot and forgeServices.Dialogue then
 																																				local dist = (hrp.Position - moldRoot.Position).Magnitude
 																																				if dist < 10 then
-																																								services.Dialogue:InvokeServer("Mold", {ItemType = autoForge.itemType})
+																																								forgeServices.Dialogue:InvokeServer("Mold", {ItemType = autoForge.itemType})
 																																				end
 																																end
 																												end
@@ -341,8 +341,8 @@ local function startAutoForge()
 																												end
 																								end
 																				end
-																				if totalOres >= autoForge.totalOresPerForge and services.UseItems then
-																								services.UseItems:InvokeServer(oreBasket)
+																				if totalOres >= autoForge.totalOresPerForge and forgeServices.UseItems then
+																								forgeServices.UseItems:InvokeServer(oreBasket)
 																								task.wait(2)
 																				end
 																end
@@ -353,7 +353,7 @@ local function startAutoForge()
 end
 
 function AutoForgeModule.Initialize(svc)
-				services = svc or {}
+				forgeServices = svc or {}
 end
 
 function AutoForgeModule.GetOreOptions(rs)
@@ -1483,10 +1483,9 @@ task.spawn(function()
     end
 end)
 
-local AutoForgeAPI = AutoForgeModule
-
 local ForgeSection = Tabs.AutoForge:AddSection("Auto Forge")
 
+-- Initialize the module with required services
 AutoForgeModule.Initialize({
 				PlayerGui = PlayerGui,
 				LocalPlayer = LocalPlayer,
@@ -1610,8 +1609,6 @@ ForgeSection:AddToggle({
 								end
 				end
 })
-
-return AutoForgeModule
 
 local oreOptions = buildOreOptions()
 
