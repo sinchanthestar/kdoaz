@@ -230,7 +230,7 @@ local function TweenToRock(Part)
     if UseInstantTPMine then
         RootPart.CFrame = CFrame.new(TargetPos, LookAt)
         RootPart.Velocity = Vector3.new(0, 0, 0)
-        task.wait(0.1)
+        task.wait(1)
         return true
     end
 
@@ -397,7 +397,7 @@ local function TweenToEnemy(Mob, OffsetY)
     if UseInstantTPEnemy then
         RootPart.CFrame = CFrame.new(TargetPos, MobRoot.Position)
         RootPart.Velocity = Vector3.new(0, 0, 0)
-        task.wait(0.1)
+        task.wait(1)
         return true
     end
 
@@ -1448,6 +1448,12 @@ local function performAutoSell()
         end
     end
 end
+
+AutoSellSection({
+    Title = "Auto Sell Info",
+    Icon = "info",
+    Content = "You need to interact with Greedy Cey first to work."
+})
 
 AutoSellSection:AddDropdown({
     Title = "Ores to Auto Sell",
