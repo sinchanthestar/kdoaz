@@ -999,7 +999,7 @@ local Window = AIKO:Window({
 local Tabs = {
     Info = Window:AddTab({ Name = "Home", Icon = "home" }),
     MainFarm = Window:AddTab({ Name = "Main", Icon = "sword" }),
-    AutoForge = Window:AddTab({ Name = "Forge", Icon = "hammer" }),
+    --AutoForge = Window:AddTab({ Name = "Forge", Icon = "hammer" }),
     Auto = Window:AddTab({ Name = "Auto", Icon = "loop" }),
     AutoSell = Window:AddTab({ Name = "Sell", Icon = "shop" }),
     Webhook = Window:AddTab({ Name = "Webhook", Icon = "bell" }),
@@ -1303,7 +1303,7 @@ task.spawn(function()
     end
 end)
 
-local ForgeSection = Tabs.AutoForge:AddSection("Auto Forge")
+--[[local ForgeSection = Tabs.AutoForge:AddSection("Auto Forge")
 
 ForgeSection:AddDropdown({
     Title = "Item Type",
@@ -1413,7 +1413,7 @@ ForgeSection:AddToggle({
             aiko("Auto forge stopped")
         end
     end
-})
+})]]
 
 local oreOptions = buildOreOptions()
 
