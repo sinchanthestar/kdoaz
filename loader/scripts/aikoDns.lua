@@ -2,7 +2,7 @@ local AIKO = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/
 
 local Window = AIKO:Window({
     Title = "@aikoware |",
-    Footer = " made by untog!",
+    Footer = "made by untog!",
     Version = 1
 })
 
@@ -106,7 +106,7 @@ local function duplicateCash(state)
     if state then
         task.spawn(function()
             while duplicateCashActive do
-                for i = 1, 500 do
+                for i = 1, 560 do
                     pcall(function()
                         RecieveCash:FireServer({
                             Value = 100,
