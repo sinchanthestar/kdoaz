@@ -2495,5 +2495,5 @@ local AIKO:MakeNotify({
     Title = "@aikoware",
     Description = "Script Loaded",
     Content = "Game: Fish It",
-    Delay = 4
+    Delay = 4,
 })
