@@ -192,8 +192,8 @@ expsec:AddToggle({
 expsec:AddToggle({
     Title = "Manual Duplicate Cash",
     Default = false,
-    Callback = function(value)
-        duplicateCashActive(value)
+    Callback = function(v)
+        duplicateCash(v)
     end
 })
 
