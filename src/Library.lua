@@ -1426,13 +1426,13 @@ end
                 SectionSizeYWitdh = SectionSizeYWitdh + v.Size.Y.Offset + 3
             end
         end
-        TweenService:Create(FeatureFrame, TweenInfo.new(0.5), { Rotation = 90 }):Play()
-        TweenService:Create(Section, TweenInfo.new(0.5), { Size = UDim2.new(1, 1, 0, SectionSizeYWitdh) })
+        TweenService:Create(FeatureFrame, TweenInfo.new(0.2), { Rotation = 90 }):Play()
+        TweenService:Create(Section, TweenInfo.new(0.2), { Size = UDim2.new(1, 1, 0, SectionSizeYWitdh) })
             :Play()
-        TweenService:Create(SectionAdd, TweenInfo.new(0.5),
+        TweenService:Create(SectionAdd, TweenInfo.new(0.2),
             { Size = UDim2.new(1, 0, 0, SectionSizeYWitdh - 38) }):Play()
-        TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(1, 0, 0, 2) }):Play()
-        task.wait(0.5)
+        TweenService:Create(SectionDecideFrame, TweenInfo.new(0.2), { Size = UDim2.new(1, 0, 0, 2) }):Play()
+        task.wait(0.2)
         UpdateSizeScroll()
     end
 end
@@ -1453,12 +1453,12 @@ end
                 SectionButton.Activated:Connect(function()
                     CircleClick(SectionButton, Mouse.X, Mouse.Y)
                     if OpenSection then
-                        TweenService:Create(FeatureFrame, TweenInfo.new(0.5), { Rotation = 0 }):Play()
-                        TweenService:Create(Section, TweenInfo.new(0.5), { Size = UDim2.new(1, 1, 0, 30) }):Play()
-                        TweenService:Create(SectionDecideFrame, TweenInfo.new(0.5), { Size = UDim2.new(0, 0, 0, 2) })
+                        TweenService:Create(FeatureFrame, TweenInfo.new(0.2), { Rotation = 0 }):Play()
+                        TweenService:Create(Section, TweenInfo.new(0.2), { Size = UDim2.new(1, 1, 0, 30) }):Play()
+                        TweenService:Create(SectionDecideFrame, TweenInfo.new(0.2), { Size = UDim2.new(0, 0, 0, 2) })
                             :Play()
                         OpenSection = false
-                        task.wait(0.5)
+                        task.wait(0.2)
                         UpdateSizeScroll()
                     else
                         OpenSection = true
