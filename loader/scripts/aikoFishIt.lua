@@ -2281,12 +2281,6 @@ local dcurl = disconnectSection:AddInput({
         local cleanUrl = WebhookModule.CleanWebhookURL(url)
         if cleanUrl then
             _G.WebhookFlags.Disconnect.URL = cleanUrl
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Webhook",
-                Content = "Disconnect webhook URL updated!",
-                Delay = 3
-            })
         end
     end
 })
@@ -2298,12 +2292,6 @@ local dcid = disconnectSection:AddInput({
     Callback = function(id)
         if id and id ~= "" then
             _G.DiscordPingID = "<@" .. id:gsub("%D", "") .. ">"
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Webhook",
-                Content = "Discord ID set!",
-                Delay = 2
-            })
         else
             _G.DiscordPingID = ""
         end
@@ -2316,12 +2304,6 @@ local dcname = disconnectSection:AddInput({
     Placeholder = "Custom name (blank = use Roblox name)",
     Callback = function(name)
         _G.DisconnectCustomName = name
-        AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "| Webhook",
-            Content = "Custom name updated!",
-            Delay = 2
-        })
     end
 })
 
@@ -2331,12 +2313,6 @@ local dcrj = disconnectSection:AddToggle({
     Default = _G.WebhookFlags.Disconnect.Enabled,
     Callback = function(enabled)
         _G.WebhookFlags.Disconnect.Enabled = enabled
-        AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "| Auto Rejoin",
-            Content = enabled and "Enabled!" or "Disabled!",
-            Delay = 2
-        })
     end
 })
 
@@ -2344,14 +2320,6 @@ disconnectSection:AddButton({
     Title = "Test Disconnect Webhook",
     Callback = function()
         local success, message = WebhookModule.SendTestDisconnectWebhook()
-        if not success then
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Error",
-                Content = message,
-                Delay = 3
-            })
-        end
     end
 })
 
@@ -2387,12 +2355,6 @@ uset:AddButton({
     Content = "Returns to default speed.",
     Callback = function()
         MiscModule.Walkspeed:Reset()
-            AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "Walkspeed Reset",
-            Content = "Walkspeed back to default.",
-            Delay = 2,
-        })
     end
 })
 
@@ -2402,11 +2364,6 @@ local INFJUMP = uset:AddToggle({
     Default = false,
     Callback = function(enabled)
         MiscModule.InfiniteJump:Toggle(enabled)
-            AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "| Infinite Jump",
-            Content = enabled and "Enabled" or "Disabled",
-        })
     end
 })
 
@@ -2488,12 +2445,6 @@ local antiDrown = oxy:AddToggle({
     Default = false,
     Callback = function(state)
         MiscModule.AntiDrown:Toggle(state)
-            AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "| Anti Drown",
-            Content = state and "Enabled" or "Disabled",
-            Delay = 2
-        })
     end,
 })
 
@@ -2522,13 +2473,6 @@ local maxzoom = zooom:AddInput({
     end
 })
 
-AIKO:MakeNotify({
-    Title = "@aikoware",
-    Description = "| Script Loaded",
-    Content = "Game: Fish It",
-    Delay = 5
-})
-
 function BypassRadar(enabled)
     pcall(function()
         NetworkFunctions.UpdateRadar:InvokeServer(enabled)
@@ -2545,4 +2489,11 @@ local fishrad = radsr:AddToggle({
             NetworkFunctions.UpdateRadar:InvokeServer(enabled)
         end)
     end
+})
+
+local AIKO:MakeNotify({
+    Title = "@aikoware",
+    Description = "Script Loaded",
+    Content = "Game: Fish It",
+    Delay = 4
 })
