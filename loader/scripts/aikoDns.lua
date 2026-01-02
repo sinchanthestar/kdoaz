@@ -176,16 +176,21 @@ local main = Window:AddTab({
 local expsec = main:AddSection("Exploit")
 
 expsec:AddParagraph({
-    Title = "Tip:",
+    Title = "Tip",
+    Icon = "idea",
     Content = "Sobrahan niyo ng sukli para dalawang beses mag duplicate."
 })
 
-expsec:AddToggle({
-    Title = "Manual Duplicate Coins",
-    Content = "",
-    Default = false,
+expsec:AddInput({
+    Title = "Cash Dupe Amount",
+    Default = "1200",
+    Placeholder = "Default: 1200",
+    Content = "100-6000",
     Callback = function(value)
-        duplicateCoin(value)
+        local num = tonumber(value)
+        if num and num > 0 then
+            cashDupeAmount = num
+        end
     end
 })
 
@@ -194,6 +199,15 @@ expsec:AddToggle({
     Default = false,
     Callback = function(v)
         duplicateCash(v)
+    end
+})
+
+expsec:AddToggle({
+    Title = "Manual Duplicate Coins",
+    Content = "",
+    Default = false,
+    Callback = function(value)
+        duplicateCoin(value)
     end
 })
 
