@@ -39,8 +39,8 @@ function MiscModule.Identity:updateIdentityDisplay()
 
     if nameLabel and levelLabel then
         if self.HideIdentityEnabled then
-            nameLabel.Text = "@aikoware [PROTECTED]"
-            levelLabel.Text = "@aikoware [PROTECTED]"
+            nameLabel.Text = "Aikoware [PROTECTED]"
+            levelLabel.Text = "Aikoware [PROTECTED]"
         else
             nameLabel.Text = self.OriginalName
             levelLabel.Text = self.OriginalLevel
