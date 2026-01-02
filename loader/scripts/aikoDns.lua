@@ -1,8 +1,8 @@
 local AIKO = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/src/Library.lua"))()
 
 local Window = AIKO:Window({
-    Title = "@aikoware |",
-    Footer = "made by untog!",
+    Title = "Aikoware |",
+    Footer = "made by @aoki!",
     Version = 1
 })
 
@@ -252,11 +252,7 @@ visec:AddButton({
     Title = "Add Exp",
     Callback = function()
         activateExp()
-        AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "",
-            Content = "Exp Added!"
-        })
+        aiko("Exp Added!")
     end
 })
 
@@ -268,14 +264,8 @@ local info = Window:AddTab({
 local infosec = info:AddSection("Info", true)
 
 infosec:AddParagraph({
-    Title = "Warning:",
-    Icon = "alert",
-    Content = "I made this script for testing purposes only, I am not responsible for any bans or any other consequences."
-})
-
-infosec:AddParagraph({
     Title = "Discord",
-    Content = "Join to our discord server for more updates and information.",
+    Content = "Join our discord for more information.",
     Icon = "discord",
     ButtonText = "Copy Discord Link",
     ButtonCallback = function()
@@ -288,7 +278,7 @@ infosec:AddParagraph({
 })
 
 AIKO:MakeNotify({
-    Title = "@aikoware",
+    Title = "Aikoware",
     Description = "| Script Loaded",
     Content = "Game: Diesel 'N Steel",
     Delay = 5
