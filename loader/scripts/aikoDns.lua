@@ -115,7 +115,7 @@ local function duplicateCash(state)
                         })
                     end)
                 end
-                task.wait(0.4)
+                task.wait(0.3)
             end
         end)
     end
@@ -191,7 +191,6 @@ expsec:AddInput({
         local num = tonumber(value)
         if num and num > 0 then
             cashDupeAmount = num
-            aiko("Multiplier set to: " .. value)
         end
     end
 })
