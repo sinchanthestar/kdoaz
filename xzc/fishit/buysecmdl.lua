@@ -165,24 +165,9 @@ end
 function ShopModule.PurchaseRod(rodName, RFPurchaseFishingRod, Library)
     local key = ShopModule.RodKeyMap[rodName]
     if key and ShopModule.Rods[key] then
-        local success, err = pcall(function()
+        pcall(function()
             RFPurchaseFishingRod:InvokeServer(ShopModule.Rods[key])
         end)
-        if success then
-            Library:MakeNotify({
-                Title = "@aikoware", 
-                Description = "| Rod Purchase", 
-                Content = "Purchased "..rodName, 
-                Delay = 3
-            })
-        else
-            Library:MakeNotify({
-                Title = "@aikoware", 
-                Description = "| Rod Purchase Error", 
-                Content = tostring(err), 
-                Delay = 4
-            })
-        end
     end
 end
 
@@ -190,24 +175,9 @@ function ShopModule.PurchaseBait(baitName, RFPurchaseBait, Library)
     local key = ShopModule.BaitKeyMap[baitName]
     if key and ShopModule.Baits[key] then
         local amount = ShopModule.Baits[key]
-        local success, err = pcall(function()
+        pcall(function()
             RFPurchaseBait:InvokeServer(amount)
         end)
-        if success then
-            Library:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Bait Purchase",
-                Content = "Purchased "..baitName.." x"..amount,
-                Delay = 3
-            })
-        else
-            Library:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Bait Purchase Error",
-                Content = tostring(err),
-                Delay = 4
-            })
-        end
     end
 end
 
@@ -215,24 +185,9 @@ function ShopModule.PurchaseBoat(boatName, RFPurchaseBoat, Library)
     local boatKeyMap = ShopModule.GetBoatKeyMap()
     local key = boatKeyMap[boatName]
     if key and ShopModule.Boats[key] then
-        local success, err = pcall(function()
+        pcall(function()
             RFPurchaseBoat:InvokeServer(ShopModule.Boats[key].Id)
         end)
-        if success then
-            Library:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Boat Purchase",
-                Content = "Purchased "..boatName,
-                Delay = 3
-            })
-        else
-            Library:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Boat Purchase Error",
-                Content = tostring(err),
-                Delay = 5
-            })
-        end
     end
 end
 
@@ -250,20 +205,10 @@ function ShopModule.StartAutoBuy(ReplicatedStorage, Library)
 
                 local key = ShopModule.WeatherKeyMap[displayName]
                 if key and ShopModule.Weathers[key] then
-                    local success, err = pcall(function()
+                    pcall(function()
                         local RFPurchaseWeatherEvent = ReplicatedStorage.Packages._Index["sleitnick_net@0.2.0"].net["RF/PurchaseWeatherEvent"]
                         RFPurchaseWeatherEvent:InvokeServer(key)
                     end)
-                    if success then
-                        Library:MakeNotify({
-                            Title = "@aikoware",
-                            Description = "| Auto Buy",
-                            Content = "Purchased "..displayName,
-                            Delay = 1
-                        })
-                    else
-                        warn("Error buying weather:", err)
-                    end
                     task.wait(ShopModule.BuyDelay)
                 end
             end
