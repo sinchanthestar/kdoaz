@@ -1,8 +1,8 @@
 local AIKO = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/src/Library.lua"))()
 
 local Window = AIKO:Window({
-    Title   = "@aikoware",
-    Footer  = "| made by untog",
+    Title   = "Aikoware",
+    Footer  = "| made by @aoki!",
     Version = 1,
 })
 
@@ -139,7 +139,7 @@ end
 
 function notifeed(nome)
     AIKO:MakeNotify({
-        Title = "@aikoware",
+        Title = "Aikoware",
         Description = "| Auto Eat Paused",
         Content = "The food is gone!",
         Color = Color3.fromRGB(255,100,100),
@@ -578,12 +578,6 @@ local Misc = Window:AddTab({
 })
 
 local infosec = Home:AddSection("Information", true)
-
-infosec:AddParagraph({
-    Title = "Warning",
-    Icon = "warning",
-    Content = "I made this script for testing purposes only, I am not responsible for any bans or any other consequences."
-})
 
 infosec:AddParagraph({
     Title = "Discord",
