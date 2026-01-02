@@ -28,23 +28,11 @@ return function(Players, LocalPlayer, ReplicatedStorage, Library)
     
     function Module.SendTradeRequest(targetPlayerName)
         if not targetPlayerName then
-            Library:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Error", 
-                Content = "No player selected", 
-                Delay = 3
-            })
             return false
         end
         
         local targetPlayer = Players:FindFirstChild(targetPlayerName)
         if not targetPlayer then
-            Library:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Error", 
-                Content = "Player not found", 
-                Delay = 3
-            })
             return false
         end
         
@@ -52,33 +40,11 @@ return function(Players, LocalPlayer, ReplicatedStorage, Library)
             Module.RFInitiateTrade:InvokeServer(targetPlayer.UserId, Module.Config.TradeItemId)
         end)
         
-        if success then
-            Library:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Success", 
-                Content = "Trade request sent to " .. targetPlayerName, 
-                Delay = 3
-            })
-            return true
-        else
-            Library:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Error", 
-                Content = "Auto Trade Error: " .. tostring(err), 
-                Delay = 3
-            })
-            return false
-        end
+        return success
     end
     
     function Module.SetAutoAccept(enabled)
         Module.State.AutoAcceptEnabled = enabled
-        Library:MakeNotify({
-            Title = "@aikoware",
-            Description = "| Auto Accept", 
-            Content = enabled and "ON" or "OFF", 
-            Delay = 3
-        })
     end
     
     function Module.GetAutoAcceptState()
