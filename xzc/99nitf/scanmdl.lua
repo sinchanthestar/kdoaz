@@ -22,9 +22,13 @@ local scanAngle = 0
 local scanRadius = 0
 
 local scanScreenGui = nil
+local mainFrame = nil
+local titleLabel = nil
 local explorationLabel = nil
+local percentageLabel = nil
 local progressBarFrame = nil
 local progressBar = nil
+local progressGlow = nil
 local scanBodyVelocity = nil
 
 local function initializeUI()
@@ -35,44 +39,134 @@ local function initializeUI()
     scanScreenGui.Name = "ScanMapUI"
     scanScreenGui.Parent = scanPlayerGui
 
+    -- Main container frame with modern design
+    mainFrame = Instance.new("Frame")
+    mainFrame.Parent = scanScreenGui
+    mainFrame.Size = UDim2.new(0, 320, 0, 120)
+    mainFrame.Position = UDim2.new(0.5, -160, 0.08, 0)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.Visible = false
+
+    local mainCorner = Instance.new("UICorner")
+    mainCorner.CornerRadius = UDim.new(0, 16)
+    mainCorner.Parent = mainFrame
+
+    -- Subtle shadow/glow effect
+    local shadow = Instance.new("ImageLabel")
+    shadow.Parent = mainFrame
+    shadow.BackgroundTransparency = 1
+    shadow.Position = UDim2.new(0, -15, 0, -15)
+    shadow.Size = UDim2.new(1, 30, 1, 30)
+    shadow.Image = "rbxassetid://5554236805"
+    shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    shadow.ImageTransparency = 0.7
+    shadow.ZIndex = 0
+
+    -- Title label
+    titleLabel = Instance.new("TextLabel")
+    titleLabel.Parent = mainFrame
+    titleLabel.Size = UDim2.new(1, -20, 0, 25)
+    titleLabel.Position = UDim2.new(0, 10, 0, 10)
+    titleLabel.Text = "MAP EXPLORATION"
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.TextSize = 14
+    titleLabel.TextColor3 = Color3.fromRGB(150, 150, 160)
+    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+    -- Percentage display (large)
+    percentageLabel = Instance.new("TextLabel")
+    percentageLabel.Parent = mainFrame
+    percentageLabel.Size = UDim2.new(0, 80, 0, 35)
+    percentageLabel.Position = UDim2.new(1, -90, 0, 8)
+    percentageLabel.Text = "0%"
+    percentageLabel.BackgroundTransparency = 1
+    percentageLabel.Font = Enum.Font.GothamBold
+    percentageLabel.TextSize = 32
+    percentageLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
+    percentageLabel.TextXAlignment = Enum.TextXAlignment.Right
+
+    -- Exploration status label
     explorationLabel = Instance.new("TextLabel")
-    explorationLabel.Parent = scanScreenGui
-    explorationLabel.Size = UDim2.new(0, 250, 0, 40)
-    explorationLabel.Position = UDim2.new(0.5, -125, 0.08, 0)
-    explorationLabel.Text = "Exploration: 0%"
-    explorationLabel.BackgroundTransparency = 0.3
-    explorationLabel.TextScaled = true
-    explorationLabel.TextColor3 = Color3.new(1, 1, 1)
-    explorationLabel.BackgroundColor3 = Color3.new(0, 0, 0)
-    explorationLabel.BorderSizePixel = 0
-    explorationLabel.Visible = false
+    explorationLabel.Parent = mainFrame
+    explorationLabel.Size = UDim2.new(1, -20, 0, 20)
+    explorationLabel.Position = UDim2.new(0, 10, 0, 45)
+    explorationLabel.Text = "Scanning area..."
+    explorationLabel.BackgroundTransparency = 1
+    explorationLabel.Font = Enum.Font.Gotham
+    explorationLabel.TextSize = 12
+    explorationLabel.TextColor3 = Color3.fromRGB(180, 180, 190)
+    explorationLabel.TextXAlignment = Enum.TextXAlignment.Left
 
+    -- Progress bar background frame
     progressBarFrame = Instance.new("Frame")
-    progressBarFrame.Parent = scanScreenGui
-    progressBarFrame.Size = UDim2.new(0, 250, 0, 25)
-    progressBarFrame.Position = UDim2.new(0.5, -125, 0.15, 0)
-    progressBarFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-    progressBarFrame.BackgroundTransparency = 0.3
+    progressBarFrame.Parent = mainFrame
+    progressBarFrame.Size = UDim2.new(1, -20, 0, 8)
+    progressBarFrame.Position = UDim2.new(0, 10, 1, -20)
+    progressBarFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
     progressBarFrame.BorderSizePixel = 0
-    progressBarFrame.Visible = false
 
+    local barFrameCorner = Instance.new("UICorner")
+    barFrameCorner.CornerRadius = UDim.new(0, 4)
+    barFrameCorner.Parent = progressBarFrame
+
+    -- Progress glow (behind progress bar)
+    progressGlow = Instance.new("Frame")
+    progressGlow.Parent = progressBarFrame
+    progressGlow.Size = UDim2.new(0, 0, 1, 0)
+    progressGlow.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
+    progressGlow.BackgroundTransparency = 0.7
+    progressGlow.BorderSizePixel = 0
+    progressGlow.ZIndex = 1
+
+    local glowCorner = Instance.new("UICorner")
+    glowCorner.CornerRadius = UDim.new(0, 4)
+    glowCorner.Parent = progressGlow
+
+    -- Progress bar (gradient)
     progressBar = Instance.new("Frame")
     progressBar.Parent = progressBarFrame
     progressBar.Size = UDim2.new(0, 0, 1, 0)
-    progressBar.BackgroundColor3 = Color3.new(0, 1, 0)
+    progressBar.BackgroundColor3 = Color3.fromRGB(100, 200, 255)
     progressBar.BorderSizePixel = 0
-
-    local labelCorner = Instance.new("UICorner")
-    labelCorner.CornerRadius = UDim.new(0, 8)
-    labelCorner.Parent = explorationLabel
-
-    local frameCorner = Instance.new("UICorner")
-    frameCorner.CornerRadius = UDim.new(0, 8)
-    frameCorner.Parent = progressBarFrame
+    progressBar.ZIndex = 2
 
     local barCorner = Instance.new("UICorner")
-    barCorner.CornerRadius = UDim.new(0, 8)
+    barCorner.CornerRadius = UDim.new(0, 4)
     barCorner.Parent = progressBar
+
+    -- Gradient for progress bar
+    local gradient = Instance.new("UIGradient")
+    gradient.Parent = progressBar
+    gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 180, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 220, 255))
+    }
+    gradient.Rotation = 90
+
+    -- Scanning animation effect
+    local scanLine = Instance.new("Frame")
+    scanLine.Parent = progressBar
+    scanLine.Size = UDim2.new(0, 3, 1, 0)
+    scanLine.Position = UDim2.new(1, -3, 0, 0)
+    scanLine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    scanLine.BackgroundTransparency = 0.3
+    scanLine.BorderSizePixel = 0
+    scanLine.ZIndex = 3
+
+    -- Animate scan line
+    task.spawn(function()
+        while scanScreenGui do
+            if mainFrame.Visible then
+                local tween = TweenService:Create(scanLine, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+                    BackgroundTransparency = 0.8
+                })
+                tween:Play()
+            end
+            task.wait(1)
+        end
+    end)
 
     scanBodyVelocity = Instance.new("BodyVelocity")
     scanBodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
@@ -120,6 +214,41 @@ local function moveToPosition(targetPosition)
     end
 end
 
+local function updateProgress(percentage)
+    local clampedPercentage = math.min(percentage, 100)
+    
+    -- Smooth tween for percentage
+    local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    
+    -- Update percentage label with color transition
+    percentageLabel.Text = clampedPercentage .. "%"
+    
+    -- Color transition based on percentage
+    local color
+    if clampedPercentage < 33 then
+        color = Color3.fromRGB(100, 200, 255) -- Blue
+    elseif clampedPercentage < 66 then
+        color = Color3.fromRGB(100, 255, 200) -- Cyan
+    else
+        color = Color3.fromRGB(100, 255, 100) -- Green
+    end
+    
+    local colorTween = TweenService:Create(percentageLabel, tweenInfo, {TextColor3 = color})
+    colorTween:Play()
+    
+    local barTween = TweenService:Create(progressBar, tweenInfo, {
+        Size = UDim2.new(clampedPercentage / 100, 0, 1, 0),
+        BackgroundColor3 = color
+    })
+    barTween:Play()
+    
+    local glowTween = TweenService:Create(progressGlow, tweenInfo, {
+        Size = UDim2.new(clampedPercentage / 100, 0, 1, 0),
+        BackgroundColor3 = color
+    })
+    glowTween:Play()
+end
+
 local function runScanLoop()
     if scanRunning then return end
     
@@ -127,8 +256,13 @@ local function runScanLoop()
     scanHumanoidRootPart = character:WaitForChild("HumanoidRootPart")
     
     scanRunning = true
-    explorationLabel.Visible = true
-    progressBarFrame.Visible = true
+    mainFrame.Visible = true
+    
+    -- Fade in animation
+    mainFrame.BackgroundTransparency = 1
+    local fadeIn = TweenService:Create(mainFrame, TweenInfo.new(0.3), {BackgroundTransparency = 0})
+    fadeIn:Play()
+    
     attachBodyVelocity()
     
     while scanEnabled and scanRadius < scanMaxRadius do
@@ -143,17 +277,20 @@ local function runScanLoop()
             mapMinX, mapMinZ, mapMaxX, mapMaxZ
         )
         local percentage = math.floor(overlapArea / mapArea * 100)
-        local clampedPercentage = math.min(percentage, 100)
+        updateProgress(percentage)
         
-        explorationLabel.Text = "Exploration: " .. clampedPercentage .. "%"
-        progressBar.Size = UDim2.new(clampedPercentage / 100, 0, 1, 0)
         task.wait()
     end
     
     scanBodyVelocity.Velocity = Vector3.zero
     detachBodyVelocity()
-    explorationLabel.Visible = false
-    progressBarFrame.Visible = false
+    
+    -- Fade out animation
+    local fadeOut = TweenService:Create(mainFrame, TweenInfo.new(0.3), {BackgroundTransparency = 1})
+    fadeOut:Play()
+    fadeOut.Completed:Wait()
+    
+    mainFrame.Visible = false
     scanRunning = false
 end
 
@@ -163,16 +300,24 @@ local function stopScan()
         scanBodyVelocity.Velocity = Vector3.zero
     end
     detachBodyVelocity()
-    if explorationLabel then
-        explorationLabel.Text = "Exploration: 0%"
-        explorationLabel.Visible = false
+    
+    if mainFrame then
+        local fadeOut = TweenService:Create(mainFrame, TweenInfo.new(0.3), {BackgroundTransparency = 1})
+        fadeOut:Play()
+        fadeOut.Completed:Wait()
+        mainFrame.Visible = false
+    end
+    
+    if percentageLabel then
+        percentageLabel.Text = "0%"
     end
     if progressBar then
         progressBar.Size = UDim2.new(0, 0, 1, 0)
     end
-    if progressBarFrame then
-        progressBarFrame.Visible = false
+    if progressGlow then
+        progressGlow.Size = UDim2.new(0, 0, 1, 0)
     end
+    
     scanRadius = 0
     scanAngle = 0
 end
