@@ -190,6 +190,7 @@ expsec:AddInput({
         local num = tonumber(value)
         if num and num > 0 then
             cashDupeAmount = num
+            aiko("Multiplier set to: " .. value)
         end
     end
 })
