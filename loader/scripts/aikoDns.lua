@@ -115,7 +115,7 @@ local function duplicateCash(state)
                         })
                     end)
                 end
-                task.wait(0.3)
+                task.wait(0.4)
             end
         end)
     end
@@ -183,7 +183,7 @@ expsec:AddParagraph({
 })
 
 expsec:AddInput({
-    Title = "Duplicate Cash Multiplier",
+    Title = "Cash Multiplier",
     Default = "1200",
     Placeholder = "Default: 1200",
     Content = "1 - 6000",
