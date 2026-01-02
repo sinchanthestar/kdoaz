@@ -17,7 +17,6 @@ local Character = player.Character or player.CharacterAdded:Wait()
 local autoKM_Running = false
 local dupe_Running = false
 local duplicateCashActive = false
-local cashDupeAmount = 1200
 
 local function autoFarmKm(state)
     autoKM_Running = state
@@ -107,7 +106,7 @@ local function duplicateCash(state)
     if state then
         task.spawn(function()
             while duplicateCashActive do
-                for i = 1, cashDupeAmount do
+                for i = 1, 1325 do
                     pcall(function()
                         RecieveCash:FireServer({
                             Value = 100,
@@ -180,19 +179,6 @@ expsec:AddParagraph({
     Title = "Tip",
     Icon = "idea",
     Content = "Sobrahan niyo ng sukli para dalawang beses mag duplicate."
-})
-
-expsec:AddInput({
-    Title = "Cash Multiplier",
-    Default = "1200",
-    Placeholder = "Default: 1200",
-    Content = "1 - 6000",
-    Callback = function(value)
-        local num = tonumber(value)
-        if num and num > 0 then
-            cashDupeAmount = num
-        end
-    end
 })
 
 expsec:AddToggle({
