@@ -170,7 +170,7 @@ end
 
 local main = Window:AddTab({
     Name = "Main",
-    Icon = "player"
+    Icon = "star"
 })
 
 local expsec = main:AddSection("Exploit")
