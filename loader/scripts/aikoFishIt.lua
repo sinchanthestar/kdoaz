@@ -139,7 +139,6 @@ dcsec:AddParagraph({
         local link = "https://discord.gg/JccfFGpDNV"
         if setclipboard then
             setclipboard(link)
-            aiko("Successfully Copied!")
         end
     end
 })
@@ -200,7 +199,6 @@ srv:AddButton({
     Title = "Rejoin Server",
     Content = "Teleport back to the same game",
     Callback = function()
-        aiko("Rejoining server...")
         task.wait(0.5)
         local TeleportService = game:GetService("TeleportService")
         local Player = game:GetService("Players").LocalPlayer
@@ -457,12 +455,6 @@ fin:AddInput({
         local delay = tonumber(value)
         if delay and delay >= 0 then
             InstantDelayComplete = delay
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Complete Delay",
-                Content = "Set to " .. delay,
-                Delay = 2
-            })
         end
     end
 })
@@ -718,26 +710,12 @@ local freezeCHAR = ntf:AddToggle({
                         hrp.AssemblyAngularVelocity = Vector3.zero
                     end
                 end)
-
-                    AIKO:MakeNotify({
-                    Title = "@aikoware",
-                    Description = "| Freeze Character",
-                    Content = "Enabled",
-                    Delay = 2
-                })
             end
         else
             if freezeConnection then
                 freezeConnection:Disconnect()
                 freezeConnection = nil
             end
-
-                AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Freeze Character",
-                Content = "Disabled",
-                Delay = 2
-            })
         end
     end
 })
@@ -1085,14 +1063,7 @@ local function startAutoBuy()
                     local success, err = pcall(function()
                         RFPurchaseWeatherEvent:InvokeServer(key)
                     end)
-                    if success then
-                            AIKO:MakeNotify({
-                            Title = "@aikoware",
-                            Description="| Auto Buy",
-                            Content="Purchased "..displayName,
-                            Delay=1
-                        })
-                    else
+                    if not success then
                         aiko("Error buying weather:", err)
                     end
                     task.wait(buyDelay)
@@ -1110,20 +1081,7 @@ local autobuyweather = ws:AddToggle({
     Callback = function(state)
         autoBuyEnabled = state
         if state then
-                AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Auto Buy",
-                Content = "Enabled",
-                Delay = 2
-            })
             startAutoBuy()
-        else
-                AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Auto Buy",
-                Content = "Disabled",
-                Delay = 2
-            })
         end
     end
 })
@@ -1239,12 +1197,6 @@ sell:AddButton({
             RFSellAllItems:InvokeServer()
         end)
 
-            AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "| Auto Sell",
-            Content = "All items sold!",
-            Delay = 3
-        })
     end
 })
 
@@ -1333,21 +1285,6 @@ local autoFAV = fav:AddToggle({
     Default = false,
     Callback = function(state)
         GlobalFav.AutoFavoriteEnabled = state
-        if state then
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Auto Favorite",
-                Content = "Enabled",
-                Delay = 2
-            })
-        else
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Auto Favorite",
-                Content = "Disabled",
-                Delay = 2
-            })
-        end
     end
 })
 
@@ -1447,13 +1384,6 @@ GlobalFav.REObtainedNewFishNotification.OnClientEvent:Connect(function(itemId, _
         pcall(function()
             GlobalFav.REFavoriteItem:FireServer(uuid)
         end)
-
-        AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "| Auto Favorited",
-            Content = fishName .. "\n" .. reason,
-            Delay = 3
-        })
     end
 end)
 
@@ -1819,12 +1749,6 @@ end
 
 local function updateEventStatus(message)
     if EventSettings.lastState ~= message then
-        AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "| Auto Event",
-            Content = message,
-            Delay = 2
-        })
         EventSettings.lastState = message
     end
 end
@@ -1957,12 +1881,6 @@ local autoEventToggle = evt:AddToggle({
         
         if enabled then
             if #EventSettings.selectedEvents == 0 and not EventSettings.priorityEvent then
-                AIKO:MakeNotify({
-                    Title = "@aikoware",
-                    Description = "| Error",
-                    Content = "Please select at least one event!",
-                    Delay = 3
-                })
                 EventSettings.autoEventActive = false
                 return
             end
@@ -1970,20 +1888,6 @@ local autoEventToggle = evt:AddToggle({
             EventSettings.originalCFrame = EventSettings.originalCFrame or 
                                           getCharacterRoot(LocalPlayer.Character).CFrame
             task.spawn(EventSettings.loop)
-            
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Auto Teleport Event",
-                Content = "Enabled!",
-                Delay = 2
-            })
-        else
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Auto Teleport Event",
-                Content = "Disabled!",
-                Delay = 2
-            })
         end
     end
 })
@@ -2133,15 +2037,6 @@ local tradePlayerDropdown = autotrade:AddDropdown({
         else
             selectedTradePlayer = nil
         end
-
-        if selectedTradePlayer then
-                AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Player Selected", 
-                Content = selectedTradePlayer, 
-                Delay = 3
-            })
-        end
     end
 })
 
@@ -2201,12 +2096,6 @@ local whurl = webhookSection:AddInput({
         local cleanUrl = WebhookModule.CleanWebhookURL(url)
         if cleanUrl then
             _G.WebhookFlags.FishCaught.URL = cleanUrl
-            AIKO:MakeNotify({
-                Title = "@aikoware",
-                Description = "| Webhook",
-                Content = "Fish webhook URL updated!",
-                Delay = 3
-            })
         end
     end
 })
@@ -2216,12 +2105,6 @@ local whfish = webhookSection:AddToggle({
     Default = _G.WebhookFlags.FishCaught.Enabled,
     Callback = function(enabled)
         _G.WebhookFlags.FishCaught.Enabled = enabled
-        AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "| Fish Webhook",
-            Content = enabled and "Enabled!" or "Disabled!",
-            Delay = 2
-        })
     end
 })
 
@@ -2262,12 +2145,6 @@ local whname = webhookSection:AddInput({
     Placeholder = "Leave blank to use Roblox name",
     Callback = function(name)
         _G.WebhookCustomName = name
-        AIKO:MakeNotify({
-            Title = "@aikoware",
-            Description = "| Webhook",
-            Content = "Custom name updated!",
-            Delay = 2
-        })
     end
 })
 
@@ -2480,7 +2357,6 @@ local maxzoom = zooom:AddInput({
         if zoomDistance and zoomDistance > 0 then
             Player.CameraMaxZoomDistance = zoomDistance
             Player.CameraMinZoomDistance = 0.5
-            aiko("Camera zoom set to: " .. zoomDistance)
         end
     end
 })
@@ -2507,5 +2383,5 @@ AIKO:MakeNotify({
     Title = "@aikoware",
     Description = "Script Loaded",
     Content = "Game: Fish It",
-    Delay = 4
+    Delay = 3
 })
