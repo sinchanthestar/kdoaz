@@ -1565,10 +1565,10 @@ tpc:AddButton({
         currentMobs, currentMobNames = TeleportModule.getMobs()
         if #currentMobNames > 0 then
             selectedMob = currentMobNames[1]
-            MobDropdown:Refresh(currentMobNames)
+            MobDropdown:SetValues(currentMobNames, {currentMobNames[1]})
         else
             selectedMob = nil
-            MobDropdown:Refresh({ "No child found" })
+            MobDropdown:SetValues({"No child found"}, {})
         end
     end
 })
@@ -1608,10 +1608,10 @@ tpch:AddButton({
         currentChests, currentChestNames = TeleportModule.getChests()
         if #currentChestNames > 0 then
             selectedChest = currentChestNames[1]
-            ChestDropdown:Refresh(currentChestNames)
+            ChestDropdown:SetValues(currentChestNames, {currentChestNames[1]})
         else
             selectedChest = nil
-            ChestDropdown:Refresh({ "No chests found" })
+            ChestDropdown:SetValues({"No chests found"}, {})
         end
     end
 })
