@@ -304,19 +304,82 @@ local info = Window:AddTab({
 
 local hideIdentity = main:AddSection("Identity")
 
-local playerName = game.Players.LocalPlayer.PlayerGui.Screen.Labels.HungerLabels.PlayerName
-local originalName = playerName.Text
-local originalColor = playerName.TextColor3
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+wait(2)
+
+local overheadGui = nil
+local overheadName = nil
+
+if character:FindFirstChild("OverHeadGui") then
+    overheadGui = character.OverHeadGui
+end
+
+if not overheadGui and character:FindFirstChild("Head") then
+    if character.Head:FindFirstChild("OverHeadGui") then
+        overheadGui = character.Head.OverHeadGui
+    end
+end
+
+if not overheadGui and character:FindFirstChild("HumanoidRootPart") then
+    if character.HumanoidRootPart:FindFirstChild("OverHeadGui") then
+        overheadGui = character.HumanoidRootPart.OverHeadGui
+    end
+end
+
+if not overheadGui then
+    for _, obj in pairs(character:GetDescendants()) do
+        if obj.Name == "OverHeadGui" then
+            overheadGui = obj
+            break
+        end
+    end
+end
+
+if not overheadGui then
+    for _, obj in pairs(Workspace:GetDescendants()) do
+        if obj.Name == "OverHeadGui" and obj:IsDescendantOf(character) then
+            overheadGui = obj
+            break
+        end
+    end
+end
+
+if overheadGui then
+    for _, obj in pairs(overheadGui:GetDescendants()) do
+        if obj:IsA("TextLabel") then
+            overheadName = obj
+            break
+        end
+    end
+end
+
+local playerGui = player:WaitForChild("PlayerGui")
+local screenGui = playerGui:WaitForChild("Screen")
+local labels = screenGui:WaitForChild("Labels")
+local hungerLabels = labels:WaitForChild("HungerLabels")
+local playerName = hungerLabels:WaitForChild("PlayerName")
+
+local originalBottomName = playerName.Text
+local originalOverheadName = overheadName and overheadName.Text or ""
+local originalBottomColor = playerName.TextColor3
+local originalOverheadColor = overheadName and overheadName.TextColor3 or Color3.fromRGB(255, 255, 255)
 local rgbEnabled = false
 local hue = 0
 
-spawn(function()
-    while wait(0.05) do
+task.spawn(function()
+    while true do
         if rgbEnabled then
             hue = hue + 0.01
             if hue >= 1 then hue = 0 end
-            playerName.TextColor3 = Color3.fromHSV(hue, 1, 1)
+            local color = Color3.fromHSV(hue, 1, 1)
+            playerName.TextColor3 = color
+            if overheadName then
+                overheadName.TextColor3 = color
+            end
         end
+        task.wait(0.05)
     end
 end)
 
@@ -326,11 +389,18 @@ hideIdentity:AddToggle({
     Default = true,
     Callback = function(value)
         if value then
-            playerName.Text = "Aikoware (PROTECTED)"
+            playerName.Text = "Aikoware [PROTECTED]"
+            if overheadName then
+                overheadName.Text = "Aikoware [PROTECTED]"
+            end
             rgbEnabled = true
         else
-            playerName.Text = originalName
-            playerName.TextColor3 = originalColor
+            playerName.Text = originalBottomName
+            playerName.TextColor3 = originalBottomColor
+            if overheadName then
+                overheadName.Text = originalOverheadName
+                overheadName.TextColor3 = originalOverheadColor
+            end
             rgbEnabled = false
         end
     end
