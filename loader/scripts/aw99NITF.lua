@@ -1596,8 +1596,8 @@ local ChestDropdown = tpch:AddDropdown({
     Multi = false,
     Options = currentChestNames,
     Default = {},
-    Callback = function(options)
-        selectedChest = options
+    Callback = function(value)
+        selectedChest = value
     end
 })
 
@@ -1622,6 +1622,8 @@ tpch:AddButton({
     Title = "Teleport to Chest",
     Content = "",
     Callback = function()
+        currentChests, currentChestNames = TeleportModule.getChests()
+        
         if selectedChest and currentChests and #currentChests > 0 then
             for i, name in ipairs(currentChestNames) do
                 if name == selectedChest then
