@@ -392,7 +392,7 @@ end)
 hideIdentity:AddToggle({
     Title = "Hide Identity",
     Content = "",
-    Default = false,
+    Default = true,
     Callback = function(value)
         if value then
             playerName.Text = "Aikoware [PROTECTED]"
