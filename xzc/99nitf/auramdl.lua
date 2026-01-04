@@ -3,6 +3,7 @@ local AuraModule = {}
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -29,109 +30,154 @@ local toolsDamageIDs = {
     ["Rifle"] = "22_6180169035"
 }
 
-local function getEquippedTool()
+local function isToolEquipped()
     local character = LocalPlayer.Character
-    if not character then return nil, nil end
+    if not character then return false, nil, nil end
     
     for toolName, damageID in pairs(toolsDamageIDs) do
         local equippedTool = character:FindFirstChild(toolName)
         if equippedTool and equippedTool:IsA("Tool") then
-            local inventoryTool = LocalPlayer:FindFirstChild("Inventory") and LocalPlayer.Inventory:FindFirstChild(toolName)
-            if inventoryTool then
-                return inventoryTool, damageID
-            end
+            local inventoryTool = LocalPlayer:FindFirstChild("Inventory") 
+                and LocalPlayer.Inventory:FindFirstChild(toolName)
+            
+            return true, inventoryTool or equippedTool, damageID
         end
     end
     
-    return nil, nil
+    return false, nil, nil
 end
 
 local function killAuraLoop()
-    while AuraModule.killAuraToggle do
+    local connection
+    connection = RunService.Heartbeat:Connect(function()
+        if not AuraModule.killAuraToggle then
+            connection:Disconnect()
+            return
+        end
+        
         local character = LocalPlayer.Character
-        local hrp = character and character:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            local tool, damageID = getEquippedTool()
-            if tool and damageID then
-                for _, mob in ipairs(Workspace.Characters:GetChildren()) do
-                    if mob:IsA("Model") then
-                        local part = mob:FindFirstChildWhichIsA("BasePart")
-                        if part and (part.Position - hrp.Position).Magnitude <= AuraModule.auraRadius then
-                            pcall(function()
-                                ReplicatedStorage:WaitForChild("RemoteEvents").ToolDamageObject:InvokeServer(
+        if not character then return end
+        
+        local hrp = character:FindFirstChild("HumanoidRootPart")
+        if not hrp then return end
+        
+        local equipped, tool, damageID = isToolEquipped()
+        if not equipped or not tool or not damageID then return end
+        
+        for _, mob in ipairs(Workspace.Characters:GetChildren()) do
+            if mob:IsA("Model") and mob ~= character then
+                local part = mob:FindFirstChildWhichIsA("BasePart")
+                if part then
+                    local distance = (part.Position - hrp.Position).Magnitude
+                    if distance <= AuraModule.auraRadius then
+                        pcall(function()
+                            ReplicatedStorage:WaitForChild("RemoteEvents")
+                                .ToolDamageObject:InvokeServer(
                                     mob,
                                     tool,
                                     damageID,
                                     CFrame.new(part.Position)
                                 )
-                            end)
-                        end
+                        end)
                     end
                 end
             end
         end
-        task.wait(0.01)
-    end
+    end)
 end
 
 local function chopAuraLoop()
-    while AuraModule.chopAuraToggle do
+    local connection
+    local processedTrees = {}
+    
+    connection = RunService.Heartbeat:Connect(function()
+        if not AuraModule.chopAuraToggle then
+            connection:Disconnect()
+            return
+        end
+        
         local character = LocalPlayer.Character
-        local hrp = character and character:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            local tool, baseDamageID = getEquippedTool()
-            if tool and baseDamageID then
-                local toolName = tool.Name
-                if toolName == "Old Axe" or toolName == "Good Axe" or toolName == "Strong Axe" or toolName == "Ice Axe" or toolName == "Chainsaw" then
-                    AuraModule.currentammount = AuraModule.currentammount + 1
-                    local trees = {}
-                    local map = Workspace:FindFirstChild("Map")
-                    if map then
-                        if map:FindFirstChild("Foliage") then
-                            for _, obj in ipairs(map.Foliage:GetChildren()) do
-                                if obj:IsA("Model") and (obj.Name == "Small Tree" or obj.Name == "Snowy Small Tree") then
-                                    table.insert(trees, obj)
-                                end
-                            end
-                        end
-                        if map:FindFirstChild("Landmarks") then
-                            for _, obj in ipairs(map.Landmarks:GetChildren()) do
-                                if obj:IsA("Model") and obj.Name == "Small Tree" then
-                                    table.insert(trees, obj)
-                                end
-                            end
-                        end
+        if not character then return end
+        
+        local hrp = character:FindFirstChild("HumanoidRootPart")
+        if not hrp then return end
+        
+        local equipped, tool, baseDamageID = isToolEquipped()
+        if not equipped or not tool or not baseDamageID then return end
+        
+        local toolName = tool.Name
+        local validAxes = {
+            ["Old Axe"] = true,
+            ["Good Axe"] = true,
+            ["Strong Axe"] = true,
+            ["Ice Axe"] = true,
+            ["Chainsaw"] = true
+        }
+        
+        if not validAxes[toolName] then return end
+        
+        local trees = {}
+        local map = Workspace:FindFirstChild("Map")
+        
+        if map then
+            local foliage = map:FindFirstChild("Foliage")
+            if foliage then
+                for _, obj in ipairs(foliage:GetChildren()) do
+                    if obj:IsA("Model") and 
+                       (obj.Name == "Small Tree" or obj.Name == "Snowy Small Tree") then
+                        table.insert(trees, obj)
                     end
-                    for _, tree in ipairs(trees) do
-                        local trunk = tree:FindFirstChild("Trunk")
-                        if trunk and trunk:IsA("BasePart") and (trunk.Position - hrp.Position).Magnitude <= AuraModule.auraRadius then
-                            local alreadyammount = false
-                            task.spawn(function()
-                                while AuraModule.chopAuraToggle and tree and tree.Parent and not alreadyammount do
-                                    alreadyammount = true
-                                    AuraModule.currentammount = AuraModule.currentammount + 1
-                                    pcall(function()
-                                        ReplicatedStorage:WaitForChild("RemoteEvents").ToolDamageObject:InvokeServer(
-                                            tree,
-                                            tool,
-                                            tostring(AuraModule.currentammount) .. "_7367831688",
-                                            CFrame.new(-2.962610244751, 4.5547881126404, -75.950843811035, 0.89621275663376, -1.3894891459643e-08, 0.44362446665764, -7.994568895775e-10, 1, 3.293635941759e-08, -0.44362446665764, -2.9872644802253e-08, 0.89621275663376)
-                                        )
-                                    end)
-                                end
-                            end)
-                        end
+                end
+            end
+            
+            local landmarks = map:FindFirstChild("Landmarks")
+            if landmarks then
+                for _, obj in ipairs(landmarks:GetChildren()) do
+                    if obj:IsA("Model") and obj.Name == "Small Tree" then
+                        table.insert(trees, obj)
                     end
                 end
             end
         end
-        task.wait(0.1)
-    end
+        
+        for _, tree in ipairs(trees) do
+            if tree and tree.Parent then
+                local trunk = tree:FindFirstChild("Trunk")
+                if trunk and trunk:IsA("BasePart") then
+                    local distance = (trunk.Position - hrp.Position).Magnitude
+                    if distance <= AuraModule.auraRadius then
+                        if not processedTrees[tree] then
+                            processedTrees[tree] = true
+                            AuraModule.currentammount = AuraModule.currentammount + 1
+                        end
+                        
+                        pcall(function()
+                            ReplicatedStorage:WaitForChild("RemoteEvents")
+                                .ToolDamageObject:InvokeServer(
+                                    tree,
+                                    tool,
+                                    tostring(AuraModule.currentammount) .. "_7367831688",
+                                    CFrame.new(trunk.Position)
+                                )
+                        end)
+                    end
+                end
+            end
+        end
+        
+        for tree in pairs(processedTrees) do
+            if not tree or not tree.Parent then
+                processedTrees[tree] = nil
+            end
+        end
+    end)
 end
 
 function AuraModule.StartKillAura()
-    AuraModule.killAuraToggle = true
-    task.spawn(killAuraLoop)
+    if not AuraModule.killAuraToggle then
+        AuraModule.killAuraToggle = true
+        task.spawn(killAuraLoop)
+    end
 end
 
 function AuraModule.StopKillAura()
@@ -139,8 +185,11 @@ function AuraModule.StopKillAura()
 end
 
 function AuraModule.StartChopAura()
-    AuraModule.chopAuraToggle = true
-    task.spawn(chopAuraLoop)
+    if not AuraModule.chopAuraToggle then
+        AuraModule.chopAuraToggle = true
+        AuraModule.currentammount = 0
+        task.spawn(chopAuraLoop)
+    end
 end
 
 function AuraModule.StopChopAura()
@@ -148,7 +197,7 @@ function AuraModule.StopChopAura()
 end
 
 function AuraModule.SetAuraRadius(radius)
-    AuraModule.auraRadius = math.clamp(radius, 1, 100)
+    AuraModule.auraRadius = math.clamp(radius, 1, 200)
 end
 
 function AuraModule.IsKillAuraActive()
