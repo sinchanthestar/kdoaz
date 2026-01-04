@@ -346,13 +346,19 @@ if not overheadGui then
     end
 end
 
-if overheadGui then
-    for _, obj in pairs(overheadGui:GetDescendants()) do
-        if obj:IsA("TextLabel") then
-            overheadName = obj
-            break
-        end
+if not overheadGui then
+    return
+end
+
+for _, obj in pairs(overheadGui:GetDescendants()) do
+    if obj:IsA("TextLabel") then
+        overheadName = obj
+        break
     end
+end
+
+if not overheadName then
+    return
 end
 
 local playerGui = player:WaitForChild("PlayerGui")
@@ -362,9 +368,9 @@ local hungerLabels = labels:WaitForChild("HungerLabels")
 local playerName = hungerLabels:WaitForChild("PlayerName")
 
 local originalBottomName = playerName.Text
-local originalOverheadName = overheadName and overheadName.Text or ""
+local originalOverheadName = overheadName.Text
 local originalBottomColor = playerName.TextColor3
-local originalOverheadColor = overheadName and overheadName.TextColor3 or Color3.fromRGB(255, 255, 255)
+local originalOverheadColor = overheadName.TextColor3
 local rgbEnabled = false
 local hue = 0
 
@@ -389,9 +395,9 @@ hideIdentity:AddToggle({
     Default = false,
     Callback = function(value)
         if value then
-            playerName.Text = "AIKOWARE [PROTECTED]"
+            playerName.Text = "Aikoware [PROTECTED]"
             if overheadName then
-                overheadName.Text = "AIKOWARE [PROTECTED]"
+                overheadName.Text = "Aikoware [PROTECTED]"
             end
             rgbEnabled = true
         else
