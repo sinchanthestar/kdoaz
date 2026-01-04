@@ -302,6 +302,40 @@ local info = Window:AddTab({
     Icon = "alert"
 })
 
+local hideIdentity = main:AddSection("Identity")
+
+local playerName = game.Players.LocalPlayer.PlayerGui.Screen.Labels.HungerLabels.PlayerName
+local originalName = playerName.Text
+local originalColor = playerName.TextColor3
+local rgbEnabled = false
+local hue = 0
+
+spawn(function()
+    while wait(0.05) do
+        if rgbEnabled then
+            hue = hue + 0.01
+            if hue >= 1 then hue = 0 end
+            playerName.TextColor3 = Color3.fromHSV(hue, 1, 1)
+        end
+    end
+end)
+
+hideIdentity:AddToggle({
+    Title = "Hide Identity",
+    Content = "",
+    Default = true,
+    Callback = function(value)
+        if value then
+            playerName.Text = "Aikoware (PROTECTED)"
+            rgbEnabled = true
+        else
+            playerName.Text = originalName
+            playerName.TextColor3 = originalColor
+            rgbEnabled = false
+        end
+    end
+})
+
 local infosec = info:AddSection("Info", true)
 
 infosec:AddParagraph({
