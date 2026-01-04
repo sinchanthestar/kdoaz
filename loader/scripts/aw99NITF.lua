@@ -965,6 +965,32 @@ local autocraft = acft:AddToggle({
     end
 })
 
+local autoanvil = Camp:AddSection("Auto Build Anvil")
+
+local anvilToggle = false
+
+autoanvil:AddToggle({
+    Title = "Auto Build Anvil",
+    Default = false,
+    Callback = function(value)
+        anvilToggle = value
+        
+        if value then
+            for _, partName in ipairs({"Anvil Base", "Anvil Front", "Anvil Back"}) do
+                if anvilToggle then
+                    local item = workspace:WaitForChild("Items"):FindFirstChild(partName)
+                    if item then
+                        game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvents"):WaitForChild("RequestBuildAnvilPiece"):InvokeServer(
+                            workspace:WaitForChild("Map"):WaitForChild("Landmarks"):WaitForChild("ToolWorkshop_MeteorShower"),
+                            item
+                        )
+                    end
+                end
+            end
+        end
+    end
+})
+
 local bpr = br:AddSection("Blueprint")
 
 local selblueprint = bpr:AddDropdown({
@@ -1476,15 +1502,6 @@ smp:AddSlider({
         ScanModule.SetScanAngle(value)
     end
 })
-
---[[smp:AddToggle({
-    Title = "Scan Map",
-    Content = "Might not work for some executors.",
-    Default = false,
-    Callback = function(state)
-        TeleportModule.ToggleScanMap(state)
-    end
-})]]
 
 local tpt = Tp:AddSection("Teleport to")
 
