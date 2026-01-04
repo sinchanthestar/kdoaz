@@ -43,108 +43,91 @@ local axeTools = {
     ["Chainsaw"] = true
 }
 
--- Debug function to find where inventory is stored
-local function debugInventoryLocation()
-    print("=== DEBUGGING INVENTORY LOCATION ===")
-    
-    -- Check LocalPlayer children
-    print("LocalPlayer children:")
-    for _, child in ipairs(LocalPlayer:GetChildren()) do
-        print(" -", child.Name, child.ClassName)
-        if child.Name == "Inventory" or child.Name == "Backpack" then
-            print("   Contents:")
-            for _, item in ipairs(child:GetChildren()) do
-                print("     *", item.Name, item.ClassName)
-            end
-        end
-    end
-    
-    -- Check Character
-    local character = LocalPlayer.Character
-    if character then
-        print("Character children (tools):")
-        for _, child in ipairs(character:GetChildren()) do
-            if child:IsA("Tool") then
-                print(" - EQUIPPED:", child.Name)
-            end
-        end
-    end
-    
-    print("=== END DEBUG ===")
-end
-
--- NEW: Try multiple locations to find the tool
-local function getEquippedTool()
-    local character = LocalPlayer.Character
-    if not character then 
-        print("[getEquippedTool] No character found")
+-- Get any tool from inventory
+local function getAnyToolWithDamageID(isChopAura)
+    local inventory = LocalPlayer:FindFirstChild("Inventory")
+    if not inventory then 
         return nil, nil 
     end
     
-    -- First, check what tool is equipped in character
-    local equippedToolName = nil
     for toolName, damageID in pairs(toolsDamageIDs) do
-        local tool = character:FindFirstChild(toolName)
-        if tool and tool:IsA("Tool") then
-            equippedToolName = toolName
-            print("[getEquippedTool] Found equipped tool in character:", toolName)
-            
-            -- Now try to find it in various inventory locations
-            local invTool = nil
-            
-            -- Try old location: LocalPlayer.Inventory
-            if LocalPlayer:FindFirstChild("Inventory") then
-                invTool = LocalPlayer.Inventory:FindFirstChild(toolName)
-                if invTool then
-                    print("[getEquippedTool] Found in LocalPlayer.Inventory")
-                    return invTool, damageID
-                end
-            end
-            
-            -- Try Backpack
-            if LocalPlayer:FindFirstChild("Backpack") then
-                invTool = LocalPlayer.Backpack:FindFirstChild(toolName)
-                if invTool then
-                    print("[getEquippedTool] Found in LocalPlayer.Backpack")
-                    return invTool, damageID
-                end
-            end
-            
-            -- Try PlayerGui > Inventory
-            local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
-            if playerGui then
-                local invGui = playerGui:FindFirstChild("Inventory")
-                if invGui then
-                    invTool = invGui:FindFirstChild(toolName)
-                    if invTool then
-                        print("[getEquippedTool] Found in PlayerGui.Inventory")
-                        return invTool, damageID
-                    end
-                end
-            end
-            
-            -- If tool is equipped but not found in inventory, just use the equipped tool
-            print("[getEquippedTool] Tool equipped but not found in inventory, using character tool")
+        -- Skip non-axe tools for chop aura
+        if isChopAura and not axeTools[toolName] then
+            continue
+        end
+        
+        local tool = inventory:FindFirstChild(toolName)
+        if tool then
             return tool, damageID
         end
     end
     
-    print("[getEquippedTool] No tool equipped")
     return nil, nil
+end
+
+-- Check if tool is currently equipped in character
+local function isToolEquipped(toolName)
+    local character = LocalPlayer.Character
+    if not character then return false end
+    
+    local equippedTool = character:FindFirstChild(toolName)
+    return equippedTool ~= nil
+end
+
+-- Equip Tool Function
+local function equipTool(tool)
+    if tool then
+        local success, err = pcall(function()
+            ReplicatedStorage:WaitForChild("RemoteEvents")
+                .EquipItemHandle:FireServer("FireAllClients", tool)
+        end)
+        if success then
+            print("[equipTool] Equipped:", tool.Name)
+            task.wait(0.1) -- Small delay to ensure tool is equipped
+        else
+            warn("[equipTool] Failed to equip:", err)
+        end
+    end
+end
+
+-- Unequip Tool Function
+local function unequipTool(tool)
+    if tool then
+        local success, err = pcall(function()
+            ReplicatedStorage:WaitForChild("RemoteEvents")
+                .UnequipItemHandle:FireServer("FireAllClients", tool)
+        end)
+        if success then
+            print("[unequipTool] Unequipped:", tool.Name)
+        else
+            warn("[unequipTool] Failed to unequip:", err)
+        end
+    end
 end
 
 -- Kill Aura Loop
 local killAuraConnection
+local currentKillTool = nil
+
 local function killAuraLoop()
     if killAuraConnection then
         killAuraConnection:Disconnect()
     end
+    
+    local attackCount = 0
+    local hasEquipped = false
     
     killAuraConnection = RunService.Heartbeat:Connect(function()
         if not AuraModule.killAuraToggle then
             if killAuraConnection then
                 killAuraConnection:Disconnect()
                 killAuraConnection = nil
+            end
+            -- Unequip when stopped
+            if currentKillTool and hasEquipped then
+                unequipTool(currentKillTool)
+                currentKillTool = nil
+                hasEquipped = false
             end
             return
         end
@@ -155,8 +138,25 @@ local function killAuraLoop()
         local hrp = character:FindFirstChild("HumanoidRootPart")
         if not hrp then return end
         
-        local tool, damageID = getEquippedTool()
-        if not tool or not damageID then return end
+        local tool, damageID = getAnyToolWithDamageID(false)
+        if not tool or not damageID then 
+            print("[Kill Aura] No weapon found in inventory")
+            return 
+        end
+        
+        -- Equip tool if not equipped yet
+        if not hasEquipped then
+            equipTool(tool)
+            currentKillTool = tool
+            hasEquipped = true
+            return -- Skip this frame to let tool equip
+        end
+        
+        -- Verify tool is actually equipped in character
+        if not isToolEquipped(tool.Name) then
+            print("[Kill Aura] Waiting for tool to equip...")
+            return
+        end
         
         -- Attack all mobs in range
         for _, mob in ipairs(Workspace.Characters:GetChildren()) do
@@ -177,7 +177,10 @@ local function killAuraLoop()
                         if not success then
                             warn("[Kill Aura] Error:", err)
                         else
-                            print("[Kill Aura] Attacked:", mob.Name)
+                            attackCount = attackCount + 1
+                            if attackCount % 10 == 0 then
+                                print("[Kill Aura] Total attacks:", attackCount)
+                            end
                         end
                     end
                 end
@@ -189,11 +192,15 @@ end
 -- Chop Aura Loop
 local chopAuraConnection
 local processedTrees = {}
+local currentChopTool = nil
 
 local function chopAuraLoop()
     if chopAuraConnection then
         chopAuraConnection:Disconnect()
     end
+    
+    local chopCount = 0
+    local hasEquipped = false
     
     chopAuraConnection = RunService.Heartbeat:Connect(function()
         if not AuraModule.chopAuraToggle then
@@ -202,6 +209,12 @@ local function chopAuraLoop()
                 chopAuraConnection = nil
             end
             processedTrees = {}
+            -- Unequip when stopped
+            if currentChopTool and hasEquipped then
+                unequipTool(currentChopTool)
+                currentChopTool = nil
+                hasEquipped = false
+            end
             return
         end
         
@@ -211,13 +224,24 @@ local function chopAuraLoop()
         local hrp = character:FindFirstChild("HumanoidRootPart")
         if not hrp then return end
         
-        local tool, damageID = getEquippedTool()
-        if not tool or not damageID then return end
-        
-        -- Check if it's an axe
-        if not axeTools[tool.Name] then 
-            print("[Chop Aura] Not an axe tool:", tool.Name)
+        local tool, damageID = getAnyToolWithDamageID(true)
+        if not tool or not damageID then 
+            print("[Chop Aura] No axe found in inventory")
             return 
+        end
+        
+        -- Equip tool if not equipped yet
+        if not hasEquipped then
+            equipTool(tool)
+            currentChopTool = tool
+            hasEquipped = true
+            return -- Skip this frame to let tool equip
+        end
+        
+        -- Verify tool is actually equipped in character
+        if not isToolEquipped(tool.Name) then
+            print("[Chop Aura] Waiting for tool to equip...")
+            return
         end
         
         -- Collect all trees
@@ -244,8 +268,6 @@ local function chopAuraLoop()
             end
         end
         
-        print("[Chop Aura] Found", #trees, "trees")
-        
         -- Attack trees in range
         for _, tree in ipairs(trees) do
             if tree and tree.Parent then
@@ -270,7 +292,10 @@ local function chopAuraLoop()
                         if not success then
                             warn("[Chop Aura] Error:", err)
                         else
-                            print("[Chop Aura] Chopped tree at distance:", distance)
+                            chopCount = chopCount + 1
+                            if chopCount % 5 == 0 then
+                                print("[Chop Aura] Total chops:", chopCount)
+                            end
                         end
                     end
                 end
@@ -291,7 +316,7 @@ function AuraModule.StartKillAura()
     if AuraModule.killAuraToggle then return end
     AuraModule.killAuraToggle = true
     print("[Kill Aura] Started - Radius:", AuraModule.auraRadius)
-    debugInventoryLocation()  -- Run debug on start
+    print("[Kill Aura] Will auto-equip weapon from inventory")
     killAuraLoop()
 end
 
@@ -302,7 +327,11 @@ function AuraModule.StopKillAura()
         killAuraConnection:Disconnect()
         killAuraConnection = nil
     end
-    print("[Kill Aura] Stopped")
+    if currentKillTool then
+        unequipTool(currentKillTool)
+        currentKillTool = nil
+    end
+    print("[Kill Aura] Stopped and unequipped weapon")
 end
 
 -- Start Chop Aura Function
@@ -312,7 +341,7 @@ function AuraModule.StartChopAura()
     AuraModule.currentammount = 0
     processedTrees = {}
     print("[Chop Aura] Started - Radius:", AuraModule.auraRadius)
-    debugInventoryLocation()  -- Run debug on start
+    print("[Chop Aura] Will auto-equip axe from inventory")
     chopAuraLoop()
 end
 
@@ -324,7 +353,11 @@ function AuraModule.StopChopAura()
         chopAuraConnection = nil
     end
     processedTrees = {}
-    print("[Chop Aura] Stopped")
+    if currentChopTool then
+        unequipTool(currentChopTool)
+        currentChopTool = nil
+    end
+    print("[Chop Aura] Stopped and unequipped axe")
 end
 
 -- Set Aura Radius Function
@@ -348,8 +381,5 @@ function AuraModule.StopAllAuras()
     AuraModule.StopKillAura()
     AuraModule.StopChopAura()
 end
-
--- Export debug function for manual testing
-AuraModule.DebugInventory = debugInventoryLocation
 
 return AuraModule
