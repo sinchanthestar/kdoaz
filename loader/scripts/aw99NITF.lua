@@ -1621,14 +1621,12 @@ tpch:AddButton({
     Content = "",
     Callback = function()
         if selectedChest and currentChests then
-            local chestIndex = 1
             for i, name in ipairs(currentChestNames) do
                 if name == selectedChest then
-                    chestIndex = i
+                    TeleportModule.TeleportToChest(currentChests[i])
                     break
                 end
             end
-            TeleportModule.TeleportToChest(currentChests[chestIndex])
         end
     end
 })
