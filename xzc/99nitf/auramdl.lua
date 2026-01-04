@@ -29,28 +29,30 @@ local toolsDamageIDs = {
     ["Rifle"] = "22_6180169035"
 }
 
-local function isToolEquipped()
+local function getEquippedTool()
     local character = LocalPlayer.Character
-    if not character then return false, nil, nil end
+    if not character then return nil, nil end
     
     for toolName, damageID in pairs(toolsDamageIDs) do
         local equippedTool = character:FindFirstChild(toolName)
         if equippedTool and equippedTool:IsA("Tool") then
             local inventoryTool = LocalPlayer:FindFirstChild("Inventory") and LocalPlayer.Inventory:FindFirstChild(toolName)
-            return true, inventoryTool, damageID
+            if inventoryTool then
+                return inventoryTool, damageID
+            end
         end
     end
     
-    return false, nil, nil
+    return nil, nil
 end
 
 local function killAuraLoop()
     while AuraModule.killAuraToggle do
-        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local hrp = character:FindFirstChild("HumanoidRootPart")
+        local character = LocalPlayer.Character
+        local hrp = character and character:FindFirstChild("HumanoidRootPart")
         if hrp then
-            local equipped, tool, damageID = isToolEquipped()
-            if equipped and tool and damageID then
+            local tool, damageID = getEquippedTool()
+            if tool and damageID then
                 for _, mob in ipairs(Workspace.Characters:GetChildren()) do
                     if mob:IsA("Model") then
                         local part = mob:FindFirstChildWhichIsA("BasePart")
@@ -66,23 +68,19 @@ local function killAuraLoop()
                         end
                     end
                 end
-                task.wait(0.01)
-            else
-                task.wait(0.1)
             end
-        else
-            task.wait(0.5)
         end
+        task.wait(0.01)
     end
 end
 
 local function chopAuraLoop()
     while AuraModule.chopAuraToggle do
-        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-        local hrp = character:FindFirstChild("HumanoidRootPart")
+        local character = LocalPlayer.Character
+        local hrp = character and character:FindFirstChild("HumanoidRootPart")
         if hrp then
-            local equipped, tool, baseDamageID = isToolEquipped()
-            if equipped and tool and baseDamageID then
+            local tool, baseDamageID = getEquippedTool()
+            if tool and baseDamageID then
                 local toolName = tool.Name
                 if toolName == "Old Axe" or toolName == "Good Axe" or toolName == "Strong Axe" or toolName == "Ice Axe" or toolName == "Chainsaw" then
                     AuraModule.currentammount = AuraModule.currentammount + 1
@@ -124,16 +122,10 @@ local function chopAuraLoop()
                             end)
                         end
                     end
-                    task.wait(0.1)
-                else
-                    task.wait(0.5)
                 end
-            else
-                task.wait(0.5)
             end
-        else
-            task.wait(0.5)
         end
+        task.wait(0.1)
     end
 end
 
