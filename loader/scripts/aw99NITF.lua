@@ -1597,7 +1597,7 @@ local ChestDropdown = tpch:AddDropdown({
     Options = currentChestNames,
     Default = {},
     Callback = function(options)
-        selectedChest = options[#options] or currentChestNames[1] or nil
+        selectedChest = options
     end
 })
 
@@ -1611,6 +1611,8 @@ tpch:AddButton({
             ChestDropdown:SetValues(currentChestNames, {currentChestNames[1]})
         else
             selectedChest = nil
+            currentChests = {}
+            currentChestNames = {}
             ChestDropdown:SetValues({"No chests found"}, {})
         end
     end
@@ -1620,7 +1622,7 @@ tpch:AddButton({
     Title = "Teleport to Chest",
     Content = "",
     Callback = function()
-        if selectedChest and currentChests then
+        if selectedChest and currentChests and #currentChests > 0 then
             for i, name in ipairs(currentChestNames) do
                 if name == selectedChest then
                     TeleportModule.TeleportToChest(currentChests[i])
