@@ -1717,6 +1717,76 @@ end)
 return tabtable
 end
 
+	function window:ToggleUI()
+    local ToggleButton = Instance.new("ScreenGui")
+    ToggleButton.Name = "LibraryToggleButton"
+    ToggleButton.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    ToggleButton.ResetOnSpawn = false
+    ToggleButton.Parent = CoreGui
+
+    local MainButton = Instance.new("ImageButton")
+    MainButton.Parent = ToggleButton
+    MainButton.Size = UDim2.new(0, 50, 0, 50)
+    MainButton.Position = UDim2.new(0, 20, 0, 20)
+    MainButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    MainButton.BackgroundTransparency = 0.3
+    MainButton.BorderSizePixel = 0
+    MainButton.Name = "ToggleUIButton"
+    MainButton.AutoButtonColor = false
+    
+    MainButton.Image = "rbxassetid://105338847670181"
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 10)
+    UICorner.Parent = MainButton
+
+    MainButton.MouseButton1Click:Connect(function()
+        unnamed.Enabled = not unnamed.Enabled
+        shadow.Enabled = unnamed.Enabled
+    end)
+
+    local dragging = false
+    local dragInput, dragStart, startPos
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        MainButton.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+
+    MainButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = MainButton.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    MainButton.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input == dragInput then
+            update(input)
+        end
+    end)
+end
+
+window:ToggleUI()
+
 return window
 end
 
