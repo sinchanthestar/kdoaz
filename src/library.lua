@@ -15,11 +15,11 @@ local Themes = {
         ItemUIStroke = Color3.fromRGB(41, 41, 50),
         TabFrame = Color3.fromRGB(35, 35, 40),
         SectionFrame = Color3.fromRGB(30, 30, 35),
-        TabText = Color3.fromRGB(255, 0, 255),
-        ItemText = Color3.fromRGB(255, 0, 255),
+        TabText = Color3.fromRGB(237, 237, 237),
+        ItemText = Color3.fromRGB(237, 237, 237),
         ItemUIStrokeSelected = Color3.fromRGB(80, 201, 206),
         DropdownIcon = Color3.fromRGB(175, 175, 175),
-        SectionText = Color3.fromRGB(255, 0, 255),
+        SectionText = Color3.fromRGB(237, 237, 237),
         SelectedTabFrame = Color3.fromRGB(65, 65, 70),
         ItemFrame = Color3.fromRGB(35, 35, 40),
         HoverItemFrame = Color3.fromRGB(53, 53, 57),
@@ -1735,17 +1735,10 @@ function window:ToggleUI()
     MainButton.AutoButtonColor = false
     
     MainButton.Image = "rbxassetid://105338847670181"
-    MainButton.ImageColor3 = Theme.Highlight or Color3.fromRGB(80, 201, 206)
 
     local UICorner = Instance.new("UICorner")
     UICorner.CornerRadius = UDim.new(0, 10)
     UICorner.Parent = MainButton
-
-    local UIStroke = Instance.new("UIStroke")
-    UIStroke.Thickness = 2
-    UIStroke.Color = Theme.Highlight or Color3.fromRGB(80, 201, 206)
-    UIStroke.Transparency = 0.5
-    UIStroke.Parent = MainButton
 
     MainButton.MouseButton1Click:Connect(function()
         unnamed.Enabled = not unnamed.Enabled
