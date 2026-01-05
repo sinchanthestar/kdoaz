@@ -1591,6 +1591,53 @@ WebhookSection:AddToggle({
     end
 })
 
+if webhook.enabled then
+    task.spawn(function()
+        local lastInventory = {}
+        
+        while task.wait(2) do
+            if webhook.enabled and #webhook.selectedOres > 0 then
+                local currentInv = getInventoryFromUI()
+                local selectedSet = listToSet(webhook.selectedOres)
+                
+                for itemName, currentQty in pairs(currentInv) do
+                    if selectedSet[itemName] or selectedSet["Any"] then
+                        local lastQty = lastInventory[itemName] or 0
+                        local gained = currentQty - lastQty
+                        
+                        if gained > 0 then
+                            sendWebhookNotification(
+                                "⛏️ Ore Obtained!",
+                                "You obtained " .. tostring(gained) .. "x " .. itemName,
+                                3066993,
+                                {
+                                    {
+                                        ["name"] = "Ore Type",
+                                        ["value"] = itemName,
+                                        ["inline"] = true
+                                    },
+                                    {
+                                        ["name"] = "Amount",
+                                        ["value"] = tostring(gained),
+                                        ["inline"] = true
+                                    },
+                                    {
+                                        ["name"] = "Total",
+                                        ["value"] = tostring(currentQty),
+                                        ["inline"] = true
+                                    }
+                                }
+                            )
+                        end
+                    end
+                end
+                
+                lastInventory = currentInv
+            end
+        end
+    end)
+end
+
 local TeleportNPCSection = Tabs.Teleport:AddSection("NPC")
 
 AllNPCs = GetAllNPCs()
