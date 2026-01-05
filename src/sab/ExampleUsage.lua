@@ -1,8 +1,8 @@
 local Library = require(script.Parent.GUILibrary)
 
-local Window = Library:CreateWindow("Chilli Hub - Dark Purple")
+local Window = Library:CreateWindow("Aikoware")
 
-Window:Notify("Welcome!", "GUI Library loaded successfully", 5)
+Window:Notify("Welcome!", "Aikoware Loaded!", 5)
 
 local MainTab = Window:CreateTab("Main")
 local PlayerTab = Window:CreateTab("Player")
