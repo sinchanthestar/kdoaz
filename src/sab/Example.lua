@@ -3,7 +3,7 @@ Library.Theme = "AIKOWARE"
 local Flags = Library.Flags
 
 local Window = Library:Window({
-   Text = "Aikoware"
+   Text = "Aikoware | made by aoki"
 })
 
 local Tab = Window:Tab({
