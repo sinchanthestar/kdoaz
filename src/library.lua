@@ -1734,8 +1734,7 @@ function window:ToggleUI()
     MainButton.Name = "ToggleUIButton"
     MainButton.AutoButtonColor = false
     
-    -- Use a default icon or custom one
-    MainButton.Image = "rbxassetid://7734053426" -- Example icon
+    MainButton.Image = "rbxassetid://105338847670181"
     MainButton.ImageColor3 = Theme.Highlight or Color3.fromRGB(80, 201, 206)
 
     local UICorner = Instance.new("UICorner")
@@ -1748,13 +1747,11 @@ function window:ToggleUI()
     UIStroke.Transparency = 0.5
     UIStroke.Parent = MainButton
 
-    -- Click to toggle UI
     MainButton.MouseButton1Click:Connect(function()
         unnamed.Enabled = not unnamed.Enabled
         shadow.Enabled = unnamed.Enabled
     end)
 
-    -- Make draggable
     local dragging = false
     local dragInput, dragStart, startPos
 
@@ -1792,17 +1789,6 @@ function window:ToggleUI()
         if dragging and input == dragInput then
             update(input)
         end
-    end)
-    
-    -- Hover effects
-    MainButton.MouseEnter:Connect(function()
-        TweenService:Create(MainButton, TweenInfo.new(.2, Enum.EasingStyle.Quad), {BackgroundTransparency = 0.1}):Play()
-        TweenService:Create(UIStroke, TweenInfo.new(.2, Enum.EasingStyle.Quad), {Transparency = 0}):Play()
-    end)
-    
-    MainButton.MouseLeave:Connect(function()
-        TweenService:Create(MainButton, TweenInfo.new(.2, Enum.EasingStyle.Quad), {BackgroundTransparency = 0.3}):Play()
-        TweenService:Create(UIStroke, TweenInfo.new(.2, Enum.EasingStyle.Quad), {Transparency = 0.5}):Play()
     end)
 end
 
