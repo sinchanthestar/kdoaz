@@ -50,7 +50,7 @@ X1:AddParagraph({
     Icon = "discord",
     ButtonText = "Copy Discord Link",
     ButtonCallback = function()
-        local link = "https://discord.gg/chloex"
+        local link = "https://discord.gg/JccfFGpDNV"
         if setclipboard then
             setclipboard(link)
             aiko("Successfully Copied!")
