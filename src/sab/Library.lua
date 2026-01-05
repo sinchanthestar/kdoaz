@@ -464,7 +464,7 @@ end)
 
 local uICorner1 = Instance.new("UICorner")
 uICorner1.Name = "UICorner"
-uICorner1.CornerRadius = UDim.new(0, 3)
+uICorner1.CornerRadius = UDim.new(0, 10)
 uICorner1.Parent = topbar
 
 local topbarLine = Instance.new("Frame")
@@ -472,8 +472,10 @@ topbarLine.Name = "TopbarLine"
 topbarLine.AnchorPoint = Vector2.new(0.5, 1)
 topbarLine.BackgroundColor3 = Theme.Lines
 topbarLine.BorderSizePixel = 0
+--topbarLine.Position = UDim2.new(0.5, 0, 1, 0)
+--topbarLine.Size = UDim2.new(0, 500, 0, 1)
+topbarLine.Size = UDim2.new(1, -20, 0, 1)
 topbarLine.Position = UDim2.new(0.5, 0, 1, 0)
-topbarLine.Size = UDim2.new(0, 500, 0, 1)
 topbarLine.ZIndex = 2
 topbarLine.Parent = topbar
 
