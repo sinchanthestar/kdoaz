@@ -1897,8 +1897,8 @@ evt:AddButton({
     Title = "Refresh Event List",
     Callback = function()
         local events = getAvailableEvents()
-        priorityEventDropdown:Refresh(events)
-        selectedEventsDropdown:Refresh(events)
+        priorityEventDropdown:SetValues(events)
+        selectedEventsDropdown:SetValues(events)
         AIKO:MakeNotify({
             Title = "Aikoware",
             Description = "| Event List",
@@ -2007,7 +2007,7 @@ ply:AddButton({
     Title = "Refresh Player List",
     Content = "",
     Callback = function()
-        playerDropdown:Refresh(TeleportData.GetPlayerNames(Players, LocalPlayer))
+        playerDropdown:SetValues(TeleportData.GetPlayerNames(Players, LocalPlayer))
             AIKO:MakeNotify({
             Title = "Aikoware",
             Description = "Refreshed", 
@@ -2072,7 +2072,7 @@ autotrade:AddButton({
     Icon = "refresh-cw",
     Content = "",
     Callback = function()
-        tradePlayerDropdown:Refresh(Trade.GetPlayerNames())
+        tradePlayerDropdown:SetValues(Trade.GetPlayerNames())
             AIKO:MakeNotify({
             Title = "Aikoware",
             Description = "| Refreshed", 
