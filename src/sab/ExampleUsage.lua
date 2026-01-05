@@ -1,4 +1,4 @@
-local Library = require(script.Parent.GUILibrary)
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/src/sab/Library.lua"))()
 
 local Window = Library:CreateWindow("Aikoware")
 
