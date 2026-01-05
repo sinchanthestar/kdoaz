@@ -1,5 +1,5 @@
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/src/sab/Library.lua"))()
-Library.Theme = "Dark"
+Library.Theme = "AIKOWARE"
 local Flags = Library.Flags
 
 local Window = Library:Window({
@@ -19,7 +19,8 @@ local Section = Tab:Section({
 })
 
 local Discord = Tab:Section({
-  Text = "Discord"
+   Text = "Discord",
+   Side = Right
 })
 
 local Section2 = Tab2:Section({
@@ -59,6 +60,11 @@ Discord:Button({
     Text = "Copy Server Link",
     Callback = function()
       setclipboard("https://discord.gg/JccfFGpDNV")
+      Library:Notification({
+         Title = "Aikoware",
+         Description = "Successfully Copied!",
+         Timeout = 5
+    })
     end
 })
 
