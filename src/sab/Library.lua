@@ -8,7 +8,7 @@ function Library:CreateWindow(title)
 	local playerGui = player:WaitForChild("PlayerGui")
 	
 	local screenGui = Instance.new("ScreenGui")
-	screenGui.Name = "CustomGUI"
+	screenGui.Name = "CustomGui"
 	screenGui.ResetOnSpawn = false
 	screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	screenGui.Parent = playerGui
@@ -55,7 +55,7 @@ function Library:CreateWindow(title)
 	titleLabel.Size = UDim2.new(1, -100, 1, 0)
 	titleLabel.Position = UDim2.new(0, 20, 0, 0)
 	titleLabel.BackgroundTransparency = 1
-	titleLabel.Text = title or "GUI Library"
+	titleLabel.Text = title or "Aikoware"
 	titleLabel.TextColor3 = Color3.fromRGB(150, 100, 255)
 	titleLabel.TextSize = 20
 	titleLabel.Font = Enum.Font.GothamBold
