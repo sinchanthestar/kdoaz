@@ -407,7 +407,6 @@ local main = Instance.new("Frame")
 main.Name = "Main"
 main.BackgroundColor3 = Theme.Main
 main.BorderSizePixel = 0
-main.BackgroundTransparency = 0.7
 main.Position = UDim2.new(0.345, 0, 0.291, 0)
 main.Size = UDim2.new(0, 500, 0, 350)
 main.Parent = unnamed
@@ -415,7 +414,7 @@ main.ClipsDescendants = true
 
 local uICorner = Instance.new("UICorner")
 uICorner.Name = "UICorner"
-uICorner.CornerRadius = UDim.new(0, 10)
+uICorner.CornerRadius = UDim.new(0, 3)
 uICorner.Parent = main
 
 local topbar = Instance.new("Frame")
@@ -464,7 +463,7 @@ end)
 
 local uICorner1 = Instance.new("UICorner")
 uICorner1.Name = "UICorner"
-uICorner1.CornerRadius = UDim.new(0, 10)
+uICorner1.CornerRadius = UDim.new(0, 3)
 uICorner1.Parent = topbar
 
 local topbarLine = Instance.new("Frame")
@@ -472,10 +471,8 @@ topbarLine.Name = "TopbarLine"
 topbarLine.AnchorPoint = Vector2.new(0.5, 1)
 topbarLine.BackgroundColor3 = Theme.Lines
 topbarLine.BorderSizePixel = 0
---topbarLine.Position = UDim2.new(0.5, 0, 1, 0)
---topbarLine.Size = UDim2.new(0, 500, 0, 1)
-topbarLine.Size = UDim2.new(1, -20, 0, 1)
 topbarLine.Position = UDim2.new(0.5, 0, 1, 0)
+topbarLine.Size = UDim2.new(0, 500, 0, 1)
 topbarLine.ZIndex = 2
 topbarLine.Parent = topbar
 
