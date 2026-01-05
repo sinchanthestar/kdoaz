@@ -108,7 +108,41 @@ local Themes = {
         ContainerHolder = Color3.fromRGB(25, 32, 43),
         HighlightUIStroke = Color3.fromRGB(79, 94, 124),
         Highlight = Color3.fromRGB(255, 229, 121)
-    }
+    },
+	["AIKOWARE"] = {
+    Topbar = Color3.fromRGB(45, 35, 65),
+    TabContainer = Color3.fromRGB(35, 25, 55),
+    Lines = Color3.fromRGB(70, 55, 100),
+    HoverTabFrame = Color3.fromRGB(60, 45, 90),
+    ItemUIStroke = Color3.fromRGB(55, 45, 80),
+    TabFrame = Color3.fromRGB(45, 35, 70),
+    SectionFrame = Color3.fromRGB(35, 25, 55),
+    TabText = Color3.fromRGB(237, 237, 237),
+    ItemText = Color3.fromRGB(237, 237, 237),
+    SectionText = Color3.fromRGB(237, 237, 237),
+    ItemUIStrokeSelected = Color3.fromRGB(150, 100, 220),
+    SelectedTabFrame = Color3.fromRGB(75, 60, 110),
+    ItemFrame = Color3.fromRGB(45, 35, 70),
+    HoverItemFrame = Color3.fromRGB(55, 45, 85),
+    DropdownIcon = Color3.fromRGB(175, 175, 175),
+    SectionUIStroke = Color3.fromRGB(50, 40, 75),
+    MainUIStroke = Color3.fromRGB(75, 60, 110),
+    Main = Color3.fromRGB(30, 20, 50),
+    Shadow = Color3.fromRGB(30, 20, 50),
+    SliderOuter = Color3.fromRGB(60, 50, 90),
+    SliderInner = Color3.fromRGB(150, 100, 220),
+    TabUIStroke = Color3.fromRGB(60, 50, 90),
+    InputPlaceHolder = Color3.fromRGB(75, 65, 100),
+    ToggleOuter = Color3.fromRGB(60, 50, 90),
+    ToggleOuterEnabled = Color3.fromRGB(80, 65, 120),
+    ToggleOuterUIStroke = Color3.fromRGB(75, 60, 110),
+    ToggleOuterUIStrokeEnabled = Color3.fromRGB(150, 100, 220),
+    ToggleInner = Color3.fromRGB(75, 60, 110),
+    ToggleInnerEnabled = Color3.fromRGB(150, 100, 220),
+    ContainerHolder = Color3.fromRGB(35, 28, 58),
+    HighlightUIStroke = Color3.fromRGB(95, 75, 140),
+    Highlight = Color3.fromRGB(160, 120, 230)
+},
 }
 
 local HttpService = game:GetService("HttpService")
@@ -373,6 +407,7 @@ local main = Instance.new("Frame")
 main.Name = "Main"
 main.BackgroundColor3 = Theme.Main
 main.BorderSizePixel = 0
+main.BackgroundTransparency = 0.7
 main.Position = UDim2.new(0.345, 0, 0.291, 0)
 main.Size = UDim2.new(0, 500, 0, 350)
 main.Parent = unnamed
@@ -380,7 +415,7 @@ main.ClipsDescendants = true
 
 local uICorner = Instance.new("UICorner")
 uICorner.Name = "UICorner"
-uICorner.CornerRadius = UDim.new(0, 3)
+uICorner.CornerRadius = UDim.new(0, 10)
 uICorner.Parent = main
 
 local topbar = Instance.new("Frame")
