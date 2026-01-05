@@ -1124,6 +1124,7 @@ dragButton.TextSize = 14
 dragButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 dragButton.BackgroundTransparency = 1
 dragButton.Size = UDim2.new(0, 9, 0, 9)
+dragButton.Active = true
 dragButton.Parent = dragIcon
 
 sliderFrame.MouseEnter:Connect(function()
@@ -1154,9 +1155,10 @@ local MaxSize = 1
 local SizeFromScale = (MinSize +  (MaxSize - MinSize)) * DefaultScale
 SizeFromScale = SizeFromScale - (SizeFromScale % 2)
 
-dragButton.MouseButton1Down:Connect(function() -- Skidded from material ui hehe, sorry
+dragButton.MouseButton1Down:Connect(function()
 	local MouseMove, MouseKill
-	MouseMove = Mouse.Move:Connect(function()
+	
+	local function updateSlider()
 		local Px = library:GetXY(sliderOuter)
 		SizeFromScale = (MinSize +  (MaxSize - MinSize)) * Px
 		local Value = math.floor(Info.Minimum + ((Info.Maximum - Info.Minimum) * Px))
@@ -1169,10 +1171,16 @@ dragButton.MouseButton1Down:Connect(function() -- Skidded from material ui hehe,
 		end
 		sliderValueText.Text = tostring(Value)..Info.Postfix
 		task.spawn(Info.Callback, Value)
-	end)
+	end
+	
+	MouseMove = Mouse.Move:Connect(updateSlider)
+	
+	local TouchMove = UserInputService.TouchMoved:Connect(updateSlider)
+	
 	MouseKill = UserInputService.InputEnded:Connect(function(UserInput)
-		if UserInput.UserInputType == Enum.UserInputType.MouseButton1 then
+		if UserInput.UserInputType == Enum.UserInputType.MouseButton1 or UserInput.UserInputType == Enum.UserInputType.Touch then
 			MouseMove:Disconnect()
+			TouchMove:Disconnect()
 			MouseKill:Disconnect()
 		end
 	end)
