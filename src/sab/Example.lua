@@ -20,7 +20,7 @@ local Section = Tab:Section({
 
 local Discord = Tab:Section({
    Text = "Discord",
-   Side = Right
+   Side = "Right"
 })
 
 local Section2 = Tab2:Section({
