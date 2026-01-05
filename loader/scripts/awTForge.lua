@@ -736,24 +736,41 @@ local function sendWebhookNotification(title, description, color, fields)
         data["content"] = "<@" .. webhook.userId .. ">"
     end
 
-    local success, response = pcall(function()
+    local success, jsonData = pcall(function()
         return HttpService:JSONEncode(data)
     end)
 
-    if success then
-        pcall(function()
-            local httpRequest = (syn and syn.request) or http_request or request
-            if httpRequest then
-                httpRequest({
-                    Url = webhook.url,
-                    Method = "POST",
-                    Headers = {
-                        ["Content-Type"] = "application/json"
-                    },
-                    Body = response
-                })
-            end
-        end)
+    if not success then
+        warn("Failed to encode webhook data:", jsonData)
+        return
+    end
+
+    local httpRequest = (syn and syn.request) or 
+                       (http and http.request) or 
+                       http_request or 
+                       (fluxus and fluxus.request) or 
+                       request
+
+    if not httpRequest then
+        warn("No HTTP request function available!")
+        return
+    end
+
+    local success2, result = pcall(function()
+        return httpRequest({
+            Url = webhook.url,
+            Method = "POST",
+            Headers = {
+                ["Content-Type"] = "application/json"
+            },
+            Body = jsonData
+        })
+    end)
+
+    if success2 then
+        warn("Webhook sent successfully!")
+    else
+        warn("Failed to send webhook:", result)
     end
 end
 
@@ -1386,7 +1403,6 @@ local function performAutoSell()
         if invSet[name] then return true end
         if selectedSet["Any"] then
             for _, v in ipairs(oreOptions) do
-                if v == name then return true end
             end
         end
         return false
@@ -1539,7 +1555,7 @@ WebhookSection:AddDropdown({
 })
 
 WebhookSection:AddButton({
-    Title = "Test Webhook",
+    Title = "Webhook Test",
     Callback = function()
         if webhook.url == "" then
             return
