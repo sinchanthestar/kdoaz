@@ -1016,13 +1016,15 @@ bos:AddButton({
 
 local ws = Shop:AddSection("Weather Shop")
 
+local RFPurchaseWeatherEvent = ReplicatedStorage.Packages._Index["sleitnick_net@0.2.0"].net["RF/PurchaseWeatherEvent"]
+
 local weathers = {
-    ["Wind"] = 10000,
-    ["Snow"] = 15000,
-    ["Cloudy"] = 20000,
-    ["Storm"] = 35000,
-    ["Radiant"] = 50000,
-    ["Shark Hunt"] = 300000
+    ["Wind"] = "Wind",
+    ["Snow"] = "Snow",
+    ["Cloudy"] = "Cloudy",
+    ["Storm"] = "Storm",
+    ["Radiant"] = "Radiant",
+    ["Shark Hunt"] = "Shark Hunt"
 }
 
 local weatherNames = {
@@ -1053,7 +1055,7 @@ local selectWEATHER = ws:AddDropdown({
 })
 
 local autoBuyEnabled = false
-local buyDelay = 0.
+local buyDelay = 0.5
 
 local function startAutoBuy()
     task.spawn(function()
@@ -1064,8 +1066,16 @@ local function startAutoBuy()
                     local success, err = pcall(function()
                         RFPurchaseWeatherEvent:InvokeServer(key)
                     end)
-                    if not success then
-                        aiko("Error buying weather:", err)
+                    if success then
+                        AIKO:MakeNotify({
+                            Title = "Aikoware",
+                            Description = "| Weather Purchase",
+                            Content = "Purchased " .. displayName,
+                            Delay = 2
+                        })
+                    else
+                        -- Removed the aiko() call that wasn't defined
+                        print("Error buying weather:", err)
                     end
                     task.wait(buyDelay)
                 end
@@ -1082,7 +1092,58 @@ local autobuyweather = ws:AddToggle({
     Callback = function(state)
         autoBuyEnabled = state
         if state then
+            if #selectedWeathers == 0 then
+                AIKO:MakeNotify({
+                    Title = "Aikoware",
+                    Description = "| Error",
+                    Content = "No weather selected",
+                    Delay = 3
+                })
+                autoBuyEnabled = false
+                return
+            end
             startAutoBuy()
+        end
+    end
+})
+
+ws:AddButton({
+    Title = "Buy Selected Weather(s)",
+    Content = "Manually purchase selected weather(s) once.",
+    Callback = function()
+        if #selectedWeathers == 0 then
+            AIKO:MakeNotify({
+                Title = "Aikoware",
+                Description = "| Error",
+                Content = "No weather selected",
+                Delay = 3
+            })
+            return
+        end
+        
+        for _, displayName in ipairs(selectedWeathers) do
+            local key = weatherKeyMap[displayName]
+            if key and weathers[key] then
+                local success, err = pcall(function()
+                    RFPurchaseWeatherEvent:InvokeServer(key)
+                end)
+                if success then
+                    AIKO:MakeNotify({
+                        Title = "Aikoware",
+                        Description = "| Weather Purchase",
+                        Content = "Purchased " .. displayName,
+                        Delay = 2
+                    })
+                else
+                    AIKO:MakeNotify({
+                        Title = "Aikoware",
+                        Description = "| Purchase Error",
+                        Content = tostring(err),
+                        Delay = 3
+                    })
+                end
+                task.wait(0.5)
+            end
         end
     end
 })
