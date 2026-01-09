@@ -13,6 +13,23 @@ local MonitorGUI = {}
 local monitorVisible = false
 local updateConnection, pingUpdateConnection
 
+-- Theme Colors (Dark Purple)
+local THEME = {
+    Background = Color3.fromRGB(20, 15, 30),           -- Dark purple background
+    BackgroundAccent = Color3.fromRGB(30, 20, 45),     -- Slightly lighter purple
+    Border = Color3.fromRGB(120, 80, 200),             -- Purple border
+    BorderGlow = Color3.fromRGB(150, 100, 255),        -- Bright purple glow
+    Separator = Color3.fromRGB(100, 70, 180),          -- Purple separator
+    TitleText = Color3.fromRGB(180, 140, 255),         -- Light purple text
+    ValueText = Color3.fromRGB(200, 170, 255),         -- Lighter purple for values
+    
+    -- Status Colors
+    Good = Color3.fromRGB(150, 100, 255),              -- Purple for good
+    Medium = Color3.fromRGB(200, 150, 255),            -- Light purple for medium
+    Warning = Color3.fromRGB(255, 180, 200),           -- Pink for warning
+    Bad = Color3.fromRGB(255, 120, 180),               -- Hot pink for bad
+}
+
 -- Private functions
 local function getPing()
     local ping = 0
@@ -80,32 +97,32 @@ end
 local function updatePingColor(pingLabel, value)
     local ping = tonumber(value)
     if ping <= 50 then
-        pingLabel.TextColor3 = Color3.fromRGB(100, 255, 150)
+        pingLabel.TextColor3 = THEME.Good
     elseif ping <= 100 then
-        pingLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+        pingLabel.TextColor3 = THEME.Medium
     elseif ping <= 150 then
-        pingLabel.TextColor3 = Color3.fromRGB(255, 150, 100)
+        pingLabel.TextColor3 = THEME.Warning
     else
-        pingLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        pingLabel.TextColor3 = THEME.Bad
     end
 end
 
 local function updateCPUColor(cpuLabel, value)
     local cpu = tonumber(value)
     if cpu <= 35 then
-        cpuLabel.TextColor3 = Color3.fromRGB(100, 255, 150)
+        cpuLabel.TextColor3 = THEME.Good
     elseif cpu <= 60 then
-        cpuLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+        cpuLabel.TextColor3 = THEME.Medium
     elseif cpu <= 80 then
-        cpuLabel.TextColor3 = Color3.fromRGB(255, 150, 100)
+        cpuLabel.TextColor3 = THEME.Warning
     else
-        cpuLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        cpuLabel.TextColor3 = THEME.Bad
     end
 end
 
 local function createMonitorGUI()
     local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "JHubPanelMonitor"
+    screenGui.Name = "AikowarePanelMonitor"
     screenGui.ResetOnSpawn = false
     screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
     screenGui.DisplayOrder = 999999
@@ -113,11 +130,11 @@ local function createMonitorGUI()
     screenGui.Parent = CoreGui
     
     local container = Instance.new("Frame")
-    container.Name = "Container"
+    container.Name = "Containeri"
     container.Size = UDim2.new(0, 200, 0, 70)
     container.Position = UDim2.new(0.5, -100, 0, 50)
-    container.BackgroundColor3 = Color3.fromRGB(10, 12, 15)
-    container.BackgroundTransparency = 0.3
+    container.BackgroundColor3 = THEME.Background
+    container.BackgroundTransparency = 0.1
     container.BorderSizePixel = 0
     container.Visible = false
     container.Parent = screenGui
@@ -127,10 +144,17 @@ local function createMonitorGUI()
     containerCorner.Parent = container
     
     local containerStroke = Instance.new("UIStroke")
-    containerStroke.Color = Color3.fromRGB(255, 140, 50)
-    containerStroke.Thickness = 1.5
-    containerStroke.Transparency = 0.6
+    containerStroke.Color = THEME.Border
+    containerStroke.Thickness = 2
+    containerStroke.Transparency = 0
     containerStroke.Parent = container
+    
+    -- Subtle glow effect
+    local glowStroke = Instance.new("UIStroke")
+    glowStroke.Color = THEME.BorderGlow
+    glowStroke.Thickness = 1
+    glowStroke.Transparency = 0.5
+    glowStroke.Parent = container
     
     local header = Instance.new("Frame")
     header.Name = "Header"
@@ -144,7 +168,7 @@ local function createMonitorGUI()
     logoIcon.Position = UDim2.new(0, 8, 0, 5)
     logoIcon.BackgroundTransparency = 1
     logoIcon.Image = "rbxassetid://105338847670181"
-    logoIcon.ImageTransparency = 0.2
+    logoIcon.ImageTransparency = 0
     logoIcon.ScaleType = Enum.ScaleType.Fit
     logoIcon.Parent = header
     
@@ -158,9 +182,9 @@ local function createMonitorGUI()
     titleLabel.Position = UDim2.new(0, 36, 0, 0)
     titleLabel.BackgroundTransparency = 1
     titleLabel.Text = "Aikoware"
-    titleLabel.TextColor3 = Color3.fromRGB(255, 140, 50)
-    titleLabel.TextTransparency = 0.2
-    titleLabel.TextSize = 13
+    titleLabel.TextColor3 = THEME.TitleText
+    titleLabel.TextTransparency = 0
+    titleLabel.TextSize = 14
     titleLabel.Font = Enum.Font.GothamBold
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     titleLabel.Parent = header
@@ -169,8 +193,8 @@ local function createMonitorGUI()
     separator.Name = "Separator"
     separator.Size = UDim2.new(1, -16, 0, 1)
     separator.Position = UDim2.new(0, 8, 0, 35)
-    separator.BackgroundColor3 = Color3.fromRGB(255, 140, 50)
-    separator.BackgroundTransparency = 0.6
+    separator.BackgroundColor3 = THEME.Separator
+    separator.BackgroundTransparency = 0.3
     separator.BorderSizePixel = 0
     separator.Parent = container
     
@@ -187,9 +211,9 @@ local function createMonitorGUI()
     pingLabel.Position = UDim2.new(0, 0, 0, 0)
     pingLabel.BackgroundTransparency = 1
     pingLabel.Text = "Real Ping: 0 ms"
-    pingLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
-    pingLabel.TextTransparency = 0.1
-    pingLabel.TextSize = 13
+    pingLabel.TextColor3 = THEME.ValueText
+    pingLabel.TextTransparency = 0
+    pingLabel.TextSize = 12
     pingLabel.Font = Enum.Font.GothamBold
     pingLabel.TextXAlignment = Enum.TextXAlignment.Center
     pingLabel.Parent = content
@@ -198,8 +222,8 @@ local function createMonitorGUI()
     verticalSeparator.Name = "VerticalSeparator"
     verticalSeparator.Size = UDim2.new(0, 1, 0.7, 0)
     verticalSeparator.Position = UDim2.new(0.5, 0, 0.15, 0)
-    verticalSeparator.BackgroundColor3 = Color3.fromRGB(255, 140, 50)
-    verticalSeparator.BackgroundTransparency = 0.6
+    verticalSeparator.BackgroundColor3 = THEME.Separator
+    verticalSeparator.BackgroundTransparency = 0.3
     verticalSeparator.BorderSizePixel = 0
     verticalSeparator.Parent = content
     
@@ -209,9 +233,9 @@ local function createMonitorGUI()
     cpuLabel.Position = UDim2.new(0.5, 6, 0, 0)
     cpuLabel.BackgroundTransparency = 1
     cpuLabel.Text = "CPU: 0%"
-    cpuLabel.TextColor3 = Color3.fromRGB(100, 255, 150)
-    cpuLabel.TextTransparency = 0.1
-    cpuLabel.TextSize = 13
+    cpuLabel.TextColor3 = THEME.ValueText
+    cpuLabel.TextTransparency = 0
+    cpuLabel.TextSize = 12
     cpuLabel.Font = Enum.Font.GothamBold
     cpuLabel.TextXAlignment = Enum.TextXAlignment.Center
     cpuLabel.Parent = content
@@ -264,7 +288,7 @@ end
 function PingModule:Enable()
     if monitorVisible then return false end
     
-    local existing = CoreGui:FindFirstChild("JHubPanelMonitor")
+    local existing = CoreGui:FindFirstChild("AikowarePanelMonitor")
     if existing then
         existing:Destroy()
         task.wait(0.1)
@@ -304,7 +328,7 @@ function PingModule:Enable()
         local currentTime = tick()
         if currentTime - lastPingUpdate >= 0.5 then
             local ping = getPing()
-            MonitorGUI.PingLabel.Text = "Ping: " .. ping .. " ms"
+            MonitorGUI.PingLabel.Text = "Real Ping: " .. ping .. " ms"
             updatePingColor(MonitorGUI.PingLabel, ping)
             lastPingUpdate = currentTime
         end
