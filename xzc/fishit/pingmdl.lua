@@ -210,7 +210,7 @@ local function createMonitorGUI()
     pingLabel.Size = UDim2.new(0.5, -6, 1, 0)
     pingLabel.Position = UDim2.new(0, 0, 0, 0)
     pingLabel.BackgroundTransparency = 1
-    pingLabel.Text = "Real Ping: 0 ms"
+    pingLabel.Text = "Ping: 0 ms"
     pingLabel.TextColor3 = THEME.ValueText
     pingLabel.TextTransparency = 0
     pingLabel.TextSize = 12
@@ -328,7 +328,7 @@ function PingModule:Enable()
         local currentTime = tick()
         if currentTime - lastPingUpdate >= 0.5 then
             local ping = getPing()
-            MonitorGUI.PingLabel.Text = "Real Ping: " .. ping .. " ms"
+            MonitorGUI.PingLabel.Text = "Ping: " .. ping .. " ms"
             updatePingColor(MonitorGUI.PingLabel, ping)
             lastPingUpdate = currentTime
         end
