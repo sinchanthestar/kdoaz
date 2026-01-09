@@ -2490,8 +2490,8 @@ perf:AddToggle({
     end
 })
 
-local SkinModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/skinmodule.lua"))()
-local PingModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/pingmodule.lua"))()
+local SkinModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/xzc/fishit/skinmdl.lua"))()
+local PingModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/xzc/fishit/pingmdl.lua"))()
 
 local skinSec = Misc:AddSection("Rod Skin Animations")
 
