@@ -143,7 +143,7 @@ local function createMonitorGUI()
     logoIcon.Size = UDim2.new(0, 24, 0, 24)
     logoIcon.Position = UDim2.new(0, 8, 0, 5)
     logoIcon.BackgroundTransparency = 1
-    logoIcon.Image = "rbxassetid://91891350821146"
+    logoIcon.Image = "rbxassetid://105338847670181"
     logoIcon.ImageTransparency = 0.2
     logoIcon.ScaleType = Enum.ScaleType.Fit
     logoIcon.Parent = header
@@ -157,7 +157,7 @@ local function createMonitorGUI()
     titleLabel.Size = UDim2.new(1, -40, 1, 0)
     titleLabel.Position = UDim2.new(0, 36, 0, 0)
     titleLabel.BackgroundTransparency = 1
-    titleLabel.Text = "JHUB"
+    titleLabel.Text = "Aikoware"
     titleLabel.TextColor3 = Color3.fromRGB(255, 140, 50)
     titleLabel.TextTransparency = 0.2
     titleLabel.TextSize = 13
@@ -186,7 +186,7 @@ local function createMonitorGUI()
     pingLabel.Size = UDim2.new(0.5, -6, 1, 0)
     pingLabel.Position = UDim2.new(0, 0, 0, 0)
     pingLabel.BackgroundTransparency = 1
-    pingLabel.Text = "Ping: 0 ms"
+    pingLabel.Text = "Real Ping: 0 ms"
     pingLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
     pingLabel.TextTransparency = 0.1
     pingLabel.TextSize = 13
