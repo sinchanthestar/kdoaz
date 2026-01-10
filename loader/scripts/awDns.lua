@@ -248,9 +248,26 @@ expsec:AddToggle({
     end
 })
 
---[[ local jep = main:AddSection("Jeepney")
+local jep = main:AddSection("Jeepney")
 
-jep:AddToggle({
+jep:AddButton({
+    Title = "Spawn Milwaukee Jeepney",
+    Content = "Spawn the unreleased jeepney ;p",
+    Callback = function()
+        aiko("Spawning jeepney...")
+        task.spawn(function()
+            local args = {
+                [1] = {
+                    ["UnitName"] = "Unit 3 (404)",
+                    ["JeepneyName"] = "Milwaukee Motor Sport 11 Seater",
+                    ["OperatorNpc"] = workspace:WaitForChild("Map", 9e9):WaitForChild("Misc", 9e9):WaitForChild("Operators", 9e9):WaitForChild("Mang Juan", 9e9)
+                }
+            }
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("SpawnOperatorNPCJeepney", 9e9):FireServer(unpack(args))
+        end)
+    end
+})
+--[[jep:AddToggle({
     Title = "Booster",
     Content = "",
     Default = false,
