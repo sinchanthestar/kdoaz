@@ -378,18 +378,39 @@ jep:AddButton({
 
 local ddct = main:AddSection("Deduct")
 
+local xpAmount = 100
+local cshAmount = 100
+
+ddct:AddInput({
+    Title = "Exp Amount",
+    Content = "Deduct Exp Amount",
+    Default = "100",
+    Callback = function(value)
+        xpAmount = tonumber(value) or 0
+    end
+})
+
 ddct:AddButton({
     Title = "Deduct Exp",
     Callback = function()
         task.spawn(function()
             local args = {
                 [1] = {
-                    ["Value"] = 100;
+                    ["Value"] = xpAmount;
                     ["Password"] = 62199980;
                 };
             }
             game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("DeductExp", 9e9):FireServer(unpack(args))
         end)
+    end
+})
+
+ddct:AddInput({
+    Title = "Cash Amount",
+    Content = "Deduct Exp Amount",
+    Default = "100",
+    Callback = function(value)
+        cshAmount = tonumber(value) or 0
     end
 })
 
@@ -399,7 +420,7 @@ ddct:AddButton({
         task.spawn(function()
             local args = {
                 [1] = {
-                    ["Value"] = 100;
+                    ["Value"] = cshAmount;
                     ["Password"] = 633947663;
                 };
             }
