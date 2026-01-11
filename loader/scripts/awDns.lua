@@ -182,6 +182,11 @@ expsec:AddToggle({
 })
 
 local autoCashEnabled = false
+local args = {
+    [1] = {
+        ["Amount"] = 60;
+    };
+}
 
 expsec:AddToggle({
     Title = "Auto Cash",
@@ -192,13 +197,8 @@ expsec:AddToggle({
         if autoCashEnabled then
             task.spawn(function()
                 while autoCashEnabled do
-                    local args = {
-                        [1] = {
-                            ["Amount"] = 0.5;
-                        };
-                    }
-                    
                     game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("Pabuo", 9e9):InvokeServer(unpack(args))
+                    task.wait(0.01)
                 end
             end)
         end
