@@ -378,27 +378,18 @@ jep:AddButton({
 
 local ddct = main:AddSection("Deduct")
 
-local autoDeductXp = false
-local args = {
-    [1] = {
-        ["Value"] = 100;
-        ["Password"] = 62199980;
-    };
-}
-
 ddct:AddToggle({
     Title = "Deduct Exp",
-    Default = false,
-    Callback = function(v)
-        autoDeductXp = v
-        
-        if autoDeductXp then
-            task.spawn(function()
-                while autoDeductXp do
-                    game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("DeductExp", 9e9):FireServer(unpack(args))
-                end
-            end)
-        end
+    Callback = function()
+        task.spawn(function()
+            local args = {
+                [1] = {
+                    ["Value"] = 100;
+                    ["Password"] = 62199980;
+                }
+            }
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("DeductExp", 9e9):FireServer(unpack(args))
+        end)
     end
 })
 
