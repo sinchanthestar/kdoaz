@@ -238,6 +238,23 @@ jep:AddButton({
 })
 
 jep:AddButton({
+    Title = "Spawn Sarao Custombuilt Model 2",
+    Callback = function()
+        aiko("Spawning jeepney...")
+        task.spawn(function()
+            local args = {
+                [1] = {
+                    ["UnitName"] = "Unit 3 (404)";
+                    ["JeepneyName"] = "Sarao Custombuilt Model 2";
+                    ["OperatorNpc"] = workspace:WaitForChild("Map", 9e9):WaitForChild("Misc", 9e9):WaitForChild("Operators", 9e9):WaitForChild("Mang Juan", 9e9);
+                }
+            }
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("SpawnOperatorNPCJeepney", 9e9):FireServer(unpack(args))
+        end)
+    end
+})
+
+jep:AddButton({
     Title = "Spawn Morales 10 Seater",
     Callback = function()
         aiko("Spawning jeepney...")
@@ -246,6 +263,23 @@ jep:AddButton({
                 [1] = {
                     ["UnitName"] = "Unit 3 (404)";
                     ["JeepneyName"] = "Morales 10 Seater";
+                    ["OperatorNpc"] = workspace:WaitForChild("Map", 9e9):WaitForChild("Misc", 9e9):WaitForChild("Operators", 9e9):WaitForChild("Mang Juan", 9e9);
+                }
+            }
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("SpawnOperatorNPCJeepney", 9e9):FireServer(unpack(args))
+        end)
+    end
+})
+
+jep:AddButton({
+    Title = "Spawn DF Devera Long Model",
+    Callback = function()
+        aiko("Spawning jeepney...")
+        task.spawn(function()
+            local args = {
+                [1] = {
+                    ["UnitName"] = "Unit 3 (404)";
+                    ["JeepneyName"] = "DF Devera Long Model";
                     ["OperatorNpc"] = workspace:WaitForChild("Map", 9e9):WaitForChild("Misc", 9e9):WaitForChild("Operators", 9e9):WaitForChild("Mang Juan", 9e9);
                 }
             }
