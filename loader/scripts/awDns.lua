@@ -378,7 +378,7 @@ jep:AddButton({
 
 local ddct = main:AddSection("Deduct")
 
-ddct:AddToggle({
+ddct:AddButton({
     Title = "Deduct Exp",
     Callback = function()
         task.spawn(function()
@@ -386,9 +386,24 @@ ddct:AddToggle({
                 [1] = {
                     ["Value"] = 100;
                     ["Password"] = 62199980;
-                }
+                };
             }
             game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("DeductExp", 9e9):FireServer(unpack(args))
+        end)
+    end
+})
+
+ddct:AddButton({
+    Title = "Deduct Cash",
+    Callback = function()
+        task.spawn(function()
+            local args = {
+                [1] = {
+                    ["Value"] = 100;
+                    ["Password"] = 633947663;
+                };
+            }
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("DeductCash", 9e9):FireServer(unpack(args))
         end)
     end
 })
