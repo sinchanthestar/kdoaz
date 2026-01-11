@@ -386,7 +386,7 @@ local args = {
     };
 }
 
-expsec:AddToggle({
+ddct:AddToggle({
     Title = "Deduct Exp",
     Default = false,
     Callback = function(v)
