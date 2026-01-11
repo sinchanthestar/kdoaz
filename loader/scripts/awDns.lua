@@ -199,6 +199,7 @@ expsec:AddToggle({
             task.spawn(function()
                 while autoCashEnabled do
                     game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("Pabuo", 9e9):InvokeServer(unpack(args))
+                    task.wait()
                 end
             end)
         end
@@ -407,7 +408,7 @@ ddct:AddButton({
 
 ddct:AddInput({
     Title = "Cash Amount",
-    Content = "Deduct Exp Amount",
+    Content = "Deduct Cash Amount",
     Default = "100",
     Callback = function(value)
         cshAmount = tonumber(value) or 0
