@@ -536,7 +536,7 @@ task.spawn(function()
     end
 end)
 
-betlog:AddToggle({
+hideIdentity:AddToggle({
     Title = "Hide Identity",
     Content = "",
     Default = true,
