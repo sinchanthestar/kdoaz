@@ -120,54 +120,6 @@ local function duplicateCash(state)
     end
 end
 
-local BoostPower = 0
-local BoostEnabled = false
-local BoostConnection = nil
-
-local function BoostLogic(dt)
-    local success, err = pcall(function()
-        if BoostPower <= 0 then return end
-        local char = LocalPlayer.Character
-        if not char then return end
-        local humanoid = char:FindFirstChildOfClass("Humanoid")
-        if not humanoid then return end
-        local seat = humanoid.SeatPart
-        if not seat or not seat:IsA("VehicleSeat") then return end
-        
-        local velocity = seat.AssemblyLinearVelocity
-        if velocity and velocity.Magnitude > 0.5 then
-            seat.AssemblyLinearVelocity = velocity + (velocity.Unit * BoostPower * dt)
-        end
-    end)
-    
-    if not success then
-        warn("Booster Error:", err)
-    end
-end
-
-local function EnableBoost()
-    if BoostEnabled then return end
-    BoostEnabled = true
-    BoostConnection = RunService.Heartbeat:Connect(BoostLogic)
-end
-
-local function DisableBoost()
-    if not BoostEnabled then return end
-    BoostEnabled = false
-    if BoostConnection then
-        BoostConnection:Disconnect()
-        BoostConnection = nil
-    end
-end
-
-local function SetBoostPower(value)
-    BoostPower = value
-end
-
-local function ResetBoostPower()
-    BoostPower = 0
-end
-
 local settings = { 
     repeatamount = 55, 
     exceptions = {"SayMessageRequest"},
@@ -280,8 +232,24 @@ jep:AddButton({
                     ["OperatorNpc"] = workspace:WaitForChild("Map", 9e9):WaitForChild("Misc", 9e9):WaitForChild("Operators", 9e9):WaitForChild("Mang Juan", 9e9);
                 }
             }
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("SpawnOperatorNPCJeepney", 9e9):FireServer(unpack(args))
+        end)
+    end
+})
 
-game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("SpawnOperatorNPCJeepney", 9e9):FireServer(unpack(args))
+jep:AddButton({
+    Title = "Spawn Morales 10 Seater",
+    Callback = function()
+        aiko("Spawning jeepney...")
+        task.spawn(function()
+            local args = {
+                [1] = {
+                    ["UnitName"] = "Unit 3 (404)";
+                    ["JeepneyName"] = "Morales 10 Seater";
+                    ["OperatorNpc"] = workspace:WaitForChild("Map", 9e9):WaitForChild("Misc", 9e9):WaitForChild("Operators", 9e9):WaitForChild("Mang Juan", 9e9);
+                }
+            }
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("SpawnOperatorNPCJeepney", 9e9):FireServer(unpack(args))
         end)
     end
 })
