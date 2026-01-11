@@ -248,10 +248,10 @@ expsec:AddToggle({
     end
 })
 
-local jep = main:AddSection("Jeepney")
+local jep = main:AddSection("Spawn Jeepney")
 
 jep:AddButton({
-    Title = "Spawn Milwaukee Jeepney",
+    Title = "Spawn Milwaukee Motor Sport 11 Seater",
     Content = "Spawn the unreleased jeepney ;p",
     Callback = function()
         aiko("Spawning jeepney...")
@@ -267,37 +267,24 @@ jep:AddButton({
         end)
     end
 })
---[[jep:AddToggle({
-    Title = "Booster",
-    Content = "",
-    Default = false,
-    Callback = function(value)
-        if value then
-            EnableBoost()
-        else
-            DisableBoost()
-        end
-    end
-})
-
-jep:AddSlider({
-    Title = "Booster Power",
-    Content = "Adjust booster strength",
-    Min = 0,
-    Max = 300,
-    Default = 0,
-    Callback = function(value)
-        SetBoostPower(value)
-    end
-})
 
 jep:AddButton({
-    Title = "Reset Booster",
-    Content = "Reset booster power to 0",
+    Title = "Spawn Sarao Custombuilt V1 (SH)",
     Callback = function()
-        ResetBoostPower()
+        aiko("Spawning jeepney...")
+        task.spawn(function()
+            local args = {
+                [1] = {
+                    ["UnitName"] = "Unit 3 (404)";
+                    ["JeepneyName"] = "Sarao Custombuilt V1 (SH)";
+                    ["OperatorNpc"] = workspace:WaitForChild("Map", 9e9):WaitForChild("Misc", 9e9):WaitForChild("Operators", 9e9):WaitForChild("Mang Juan", 9e9);
+                }
+            }
+
+game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("SpawnOperatorNPCJeepney", 9e9):FireServer(unpack(args))
+        end)
     end
-}) ]]
+})
 
 local visec = main:AddSection("Visual")
 
