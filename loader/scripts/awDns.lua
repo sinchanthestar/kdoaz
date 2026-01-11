@@ -184,7 +184,7 @@ expsec:AddToggle({
 local autoCashEnabled = false
 local args = {
     [1] = {
-        ["Amount"] = 60;
+        ["Amount"] = 0.9;
     };
 }
 
