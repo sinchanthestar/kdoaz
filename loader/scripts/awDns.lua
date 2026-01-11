@@ -194,7 +194,7 @@ expsec:AddToggle({
                 while autoCashEnabled do
                     local args = {
                         [1] = {
-                            ["Amount"] = 10;
+                            ["Amount"] = 0.5;
                         };
                     }
                     
