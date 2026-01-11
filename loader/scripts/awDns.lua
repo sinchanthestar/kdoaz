@@ -181,6 +181,26 @@ expsec:AddToggle({
     end
 })
 
+local args = {
+    [1] = {
+        ["Amount"] = 0.5;
+    };
+}
+
+local autoCashEnabled = false
+
+expsec:AddToggle({
+    Title = "Auto Cash",
+    Default = false,
+    Callback = function(v)
+        autoCashEnabled = v
+        
+        while autoCashEnabled do
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes", 9e9):WaitForChild("Pabuo", 9e9):InvokeServer(unpack(args))
+        end
+    end
+})
+
 expsec:AddDivider()
 
 expsec:AddToggle({
