@@ -229,60 +229,56 @@ expTp:AddToggle({
 
 expTp:AddDivider()
 
--- Malolos Terminal
-expsec:AddButton({
+expTp:AddButton({
     Title = "Malolos Terminal (Load)",
     Callback = function()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Map.Misc.TerminalParts["Malolos - Bulakan"].ToMalolosTerminalLoadPoint.CFrame
     end
 })
 
-expsec:AddButton({
+expTp:AddButton({
     Title = "Malolos Terminal (Drop)",
     Callback = function()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Map.Misc.PassengerSpawnPoints["Malolos - Bulakan"].MalolosTerminalDropPoint.CFrame
     end
 })
 
--- Guiguinto Terminal
-expsec:AddButton({
+expTp:AddButton({
     Title = "Guiguinto Terminal (Load)",
     Callback = function()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Map.Misc.TerminalParts["Guiguinto - Bulakan"].ToGuiguintoTerminalLoadPoint.CFrame
     end
 })
 
-expsec:AddButton({
+expTp:AddButton({
     Title = "Guiguinto Terminal (Drop)",
     Callback = function()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Map.Misc.PassengerSpawnPoints["Guiguinto - Bulakan"].GuiguintoTerminalDropPoint.CFrame
     end
 })
 
--- Balagtas Terminal
-expsec:AddButton({
+expTp:AddButton({
     Title = "Balagtas Terminal (Load)",
     Callback = function()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Map.Misc.TerminalParts["Balagtas - Bulakan"].ToBalagtasTerminalLoadPoint.CFrame
     end
 })
 
-expsec:AddButton({
+expTp:AddButton({
     Title = "Balagtas Terminal (Drop)",
     Callback = function()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Map.Misc.PassengerSpawnPoints["Balagtas - Bulakan"].BalagtasTerminalDropPoint.CFrame
     end
 })
 
--- Bulakan Terminal
-expsec:AddButton({
+expTp:AddButton({
     Title = "Bulakan Terminal (Load)",
     Callback = function()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Map.Misc.TerminalParts["Malolos - Bulakan"].ToBulakanTerminalLoadPoint.CFrame
     end
 })
 
-expsec:AddButton({
+expTp:AddButton({
     Title = "Bulakan Terminal (Drop)",
     Callback = function()
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Map.Misc.PassengerSpawnPoints["Malolos - Bulakan"].BulakanTerminalDropPoint.CFrame
