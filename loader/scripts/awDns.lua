@@ -182,29 +182,26 @@ expsec:AddToggle({
     end
 })
 
-local autoCashEnabled = false
-local args = {
-    [1] = {
-        ["Amount"] = 0.5;
-    };
-}
+local remote = game:GetService("ReplicatedStorage").Remotes
+local running = false
 
-expsec:AddToggle({
+ToggleSection:AddToggle({
     Title = "Auto Cash",
     Default = false,
-    Callback = function(v)
-        autoCashEnabled = v
+    Callback = function(value)
+        running = value
 
-        if autoCashEnabled then
-            task.spawn(function()
-                while autoCashEnabled do
-                    game:GetService("ReplicatedStorage")
-                        :WaitForChild("Remotes", 9e9)
-                        :WaitForChild("Pabuo", 9e9)
-                        :InvokeServer(unpack(args))
-                    task.wait()
-                end
-            end)
+        if value then
+            remote.Pabarya:InvokeServer({ Amount = 0.5 })
+
+            for i = 1, 2000 do
+                task.spawn(function()
+                    while running do
+                        remote.Pabuo:InvokeServer({ Amount = 0.5 })
+                        task.wait(0.01)
+                    end
+                end)
+            end
         end
     end
 })
