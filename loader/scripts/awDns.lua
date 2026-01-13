@@ -15,49 +15,8 @@ local LocalPlayer = player
 local Character = player.Character or player.CharacterAdded:Wait()
 local workspace = Workspace
 
-local autoKM_Running = false
 local dupe_Running = false
 local duplicateCashActive = false
-
-local function autoFarmKm(state)
-    autoKM_Running = state
-
-    if state then
-        task.spawn(function()
-            while autoKM_Running and player.Character do
-                local hum = player.Character:FindFirstChild("Humanoid")
-                if hum and hum.SeatPart then
-                    local car = hum.SeatPart.Parent
-
-                    if car:FindFirstChild("Body") and car.Body:FindFirstChild("#Weight") then
-                        car.PrimaryPart = car.Body["#Weight"]
-                    end
-
-                    local pos1 = Vector3.new(-6205.2983, 100, 8219.8535)
-                    local pos2 = Vector3.new(-7594.5410, 100, 5130.9526)
-
-                    repeat
-                        task.wait()
-                        car.PrimaryPart.Velocity = car.PrimaryPart.CFrame.LookVector * 550
-                        car:PivotTo(CFrame.new(car.PrimaryPart.Position, pos1))
-                    until not autoKM_Running or (player.Character.PrimaryPart.Position - pos1).Magnitude < 50
-
-                    car.PrimaryPart.Velocity = Vector3.new()
-
-                    repeat
-                        task.wait()
-                        car.PrimaryPart.Velocity = car.PrimaryPart.CFrame.LookVector * 550
-                        car:PivotTo(CFrame.new(car.PrimaryPart.Position, pos2))
-                    until not autoKM_Running or (player.Character.PrimaryPart.Position - pos2).Magnitude < 50
-
-                    car.PrimaryPart.Velocity = Vector3.new()
-                end
-
-                task.wait(0.1)
-            end
-        end)
-    end
-end
 
 local function activateExp()
     pcall(function()
@@ -208,12 +167,58 @@ expsec:AddToggle({
 
 expsec:AddDivider()
 
+local player = game:GetService("Players").LocalPlayer
+local isAutoKmActive = false
+
 expsec:AddToggle({
     Title = "Auto Farm KM",
-    Content = "",
     Default = false,
     Callback = function(value)
-        autoFarmKm(value)
+        isAutoKmActive = value
+
+        if not value then return end
+
+        task.spawn(function()
+            while isAutoKmActive do
+                local char = player.Character
+                local hum = char and char:FindFirstChild("Humanoid")
+
+                if hum and hum.SeatPart then
+                    local car = hum.SeatPart.Parent
+
+                    if car:FindFirstChild("Body") and car.Body:FindFirstChild("#Weight") then
+                        car.Body.PrimaryPart = car.Body["#Weight"]
+                    end
+
+                    local carPrimaryPart = car.PrimaryPart or (car.Body and car.Body:FindFirstChild("#Weight"))
+
+                    local location1 = Vector3.new(-6205.2983, 100, 8219.8535)
+                    local location2 = Vector3.new(-7594.5410, 100, 5130.9526)
+
+                    if carPrimaryPart then
+                        repeat
+                            task.wait()
+                            if not isAutoKmActive then break end
+                            carPrimaryPart.Velocity = carPrimaryPart.CFrame.LookVector * 550
+                            car:PivotTo(CFrame.new(carPrimaryPart.Position, location1))
+                        until (char.PrimaryPart.Position - location1).Magnitude < 50
+
+                        carPrimaryPart.Velocity = Vector3.new(0,0,0)
+
+                        repeat
+                            task.wait()
+                            if not isAutoKmActive then break end
+                            carPrimaryPart.Velocity = carPrimaryPart.CFrame.LookVector * 550
+                            car:PivotTo(CFrame.new(carPrimaryPart.Position, location2))
+                        until (char.PrimaryPart.Position - location2).Magnitude < 50
+
+                        carPrimaryPart.Velocity = Vector3.new(0,0,0)
+                    end
+                end
+
+                task.wait(0.1)
+            end
+        end)
     end
 })
 
