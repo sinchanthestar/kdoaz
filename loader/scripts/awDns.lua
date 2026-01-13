@@ -185,7 +185,7 @@ expsec:AddToggle({
 local remote = game:GetService("ReplicatedStorage").Remotes
 local running = false
 
-ToggleSection:AddToggle({
+expsec:AddToggle({
     Title = "Auto Cash",
     Default = false,
     Callback = function(value)
