@@ -2490,10 +2490,10 @@ perf:AddToggle({
     end
 })
 
-local SkinModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/xzc/fishit/skinmdl.lua"))()
+-- local SkinModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/xzc/fishit/skinmdl.lua"))()
 local PingModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/xzc/fishit/pingmdl.lua"))()
 
-local skinSec = Misc:AddSection("Rod Skin Animations")
+--[[ local skinSec = Misc:AddSection("Rod Skin Animations")
 
 skinSec:AddDropdown({
     Title = "Select Skin",
@@ -2519,12 +2519,12 @@ skinSec:AddToggle({
             SkinModule:Disable()
         end
     end
-})
+}) ]]
 
-local monitor = Misc:AddSection("Real Ping")
+local monitor = Misc:AddSection("Real Ping + CPU")
 
 monitor:AddToggle({
-    Title = "Show Real Ping",
+    Title = "Show Real Ping + CPU",
     Default = false,
     Callback = function(enabled)
         if enabled then
