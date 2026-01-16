@@ -1,17 +1,41 @@
+-- Anti Octo & Remote Spy Protection
+local blockedKeywords = {
+    "octo", "simplespy", "hydroxide", "remotespy", "dex", "explorer",
+    "darkdex", "unnamed esp", "nameless", "infiniteyield", "cmdx",
+    "rconsole", "remotesniffer", "fireremote", "logremote", "spyremote",
+    "namecall", "hookmetamethod", "getnamecallmethod", "remotelistener",
+    "remotelogger", "remotedetector", "remotemonitor", "remotedebug",
+    "infinitestore", "vynixu", "owlhub", "jemshub", "universalspy"
+}
 
 local oldLoadstring
 oldLoadstring = hookfunction(loadstring, function(src)
     if type(src) == "string" then
         local lower = src:lower()
+        for _, keyword in pairs(blockedKeywords) do
+            if lower:find(keyword) then
+                game:GetService("Players").LocalPlayer:Kick(
+                    "clown ass skid 😹🫵"
+                )
+                return function() end
+            end
+        end
+    end
+    return oldLoadstring(src)
+end)
+--[[ local oldLoadstring
+oldLoadstring = hookfunction(loadstring, function(src)
+    if type(src) == "string" then
+        local lower = src:lower()
         if lower:find("octo") or lower:find("simplespy") or lower:find("hydroxide") or lower:find("remotespy") then
             game:GetService("Players").LocalPlayer:Kick(
-                "clown ass nigga 😹🫵"
+                "clown ass skid 😹🫵"
             )
             return function() end
         end
     end
     return oldLoadstring(src)
-end)
+end) ]]
 
 local AIKO = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/src/Library.lua"))()
 
