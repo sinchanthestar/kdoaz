@@ -1,3 +1,25 @@
+local blockedKeywords = {
+    "octo", "simplespy", "hydroxide", "remotespy", "remotesniffer", 
+    "spyremote", "logremote", "remotelistener", "remotelogger", 
+    "remotedetector", "remotemonitor", "remotedebug", "universalspy"
+}
+
+local oldLoadstring
+oldLoadstring = hookfunction(loadstring, function(src)
+    if type(src) == "string" then
+        local lower = src:lower()
+        for _, keyword in pairs(blockedKeywords) do
+            if lower:find(keyword) then
+                game:GetService("Players").LocalPlayer:Kick(
+                    "[AIKOWARE]: stop skidding brochacho 😹"
+                )
+                return function() end
+            end
+        end
+    end
+    return oldLoadstring(src)
+end)
+
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
