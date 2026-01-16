@@ -122,8 +122,6 @@ end
 
 setreadonly(mt, true)
 
-local settings = { 
-
 local main = Window:AddTab({
     Name = "Main",
     Icon = "star"
