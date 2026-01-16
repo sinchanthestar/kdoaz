@@ -44,8 +44,8 @@ getgenv().originalSword = nil
 getgenv().autoparry = false
 
 local Window = AIKO:Window({
-    Title = "@aikoware |",
-    Footer = "made by untog",
+    Title = "Aikoware |",
+    Footer = "made by @aoki!",
     Version = 1,
 })
 
@@ -75,7 +75,7 @@ InfoSection:AddParagraph({
         if setclipboard then
             setclipboard(link)
             AIKO:MakeNotify({
-                Title = "@aikoware",
+                Title = "Aikoware",
                 Description = "Successfully Copied!",
                 Content = "Discord Link Copied",
                 Delay = 3
@@ -1703,14 +1703,14 @@ MiscSection:AddButton({
             setSword()
             
             AIKO:MakeNotify({
-                Title = "@aikoware",
+                Title = "Aikoware",
                 Description = "Skin Applied",
                 Content = "Sword: " .. tempSwordName,
                 Delay = 3
             })
         else
             AIKO:MakeNotify({
-                Title = "@aikoware",
+                Title = "Aikoware",
                 Description = "Error",
                 Content = "Please enter a sword name",
                 Delay = 3
@@ -1728,7 +1728,7 @@ local KillSoundSystem = {
         { id = "116957716755028", name = "Leave me alone 🙏", length = 4 },
         { id = "8643750815", name = "GET OVER HERE", length = 4 },
         { id = "93779555057888", name = "HEHEHE HA", length = 4 },
-        { id = "84233173598772", name = "Head shot", length = 4 },
+        { id = "84233173598772", name = "Head Shot", length = 4 },
         { id = "8097518145", name = "Lesgo", length = 4 }
     },
     
