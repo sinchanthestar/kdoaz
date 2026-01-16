@@ -1,3 +1,14 @@
+local oldLoadstring
+oldLoadstring = hookfunction(loadstring, function(src)
+    if type(src) == "string" and src:lower():find("octo") then
+        game:GetService("Players").LocalPlayer:Kick(
+            "shut yo stupid ass up"
+        )
+        return function() end
+    end
+    return oldLoadstring(src)
+end)
+
 local AIKO = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/src/Library.lua"))()
 
 local Window = AIKO:Window({
