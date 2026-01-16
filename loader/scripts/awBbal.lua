@@ -65,6 +65,31 @@ InfoSection:AddParagraph({
     Icon = "idea",
 })
 
+B
+InfoSection:AddButton({
+    Title = "Rejoin",
+    SubTitle = "Server Hop",
+    Callback = function()
+        aiko("Rejoining server...")
+        task.wait(1)
+        game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
+    end,
+    SubCallback = function()
+        aiko("Finding new server...")
+        local Http = game:GetService("HttpService")
+        local TPS = game:GetService("TeleportService")
+        local Servers = Http:JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" ..
+            game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"))
+        for _, v in pairs(Servers.data) do
+            if v.playing < v.maxPlayers then
+                TPS:TeleportToPlaceInstance(game.PlaceId, v.id, game.Players.LocalPlayer)
+                return
+            end
+        end
+        aiko("No available servers found.")
+    end
+})
+
 InfoSection:AddParagraph({
     Title = "Discord",
     Content = "Join our discord for more updates and information!",
