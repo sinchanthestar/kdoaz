@@ -2259,7 +2259,25 @@ end
                     end
                 end)
 
-                TextBox:GetPropertyChangedSignal("Text"):Connect(function()
+                local isFocused = false
+
+TextBox.Focused:Connect(function()
+    isFocused = true
+    TextBox.Text = ""
+end)
+
+TextBox.FocusLost:Connect(function(enterPressed)
+    isFocused = false
+    local Valid = TextBox.Text:gsub("[^%d]", "")
+    if Valid ~= "" then
+        local ValidNumber = math.clamp(tonumber(Valid), SliderConfig.Min, SliderConfig.Max)
+        SliderFunc:Set(ValidNumber)
+    else
+        TextBox.Text = tostring(SliderFunc.Value)
+    end
+end)
+
+                --[[TextBox:GetPropertyChangedSignal("Text"):Connect(function()
                     local Valid = TextBox.Text:gsub("[^%d]", "")
                     if Valid ~= "" then
                         local ValidNumber = math.clamp(tonumber(Valid), SliderConfig.Min, SliderConfig.Max)
@@ -2267,7 +2285,7 @@ end
                     else
                         SliderFunc:Set(SliderConfig.Min)
                     end
-                end)
+                end)]]
                 SliderFunc:Set(SliderConfig.Default)
                 CountItem = CountItem + 1
                 Elements[configKey] = SliderFunc
