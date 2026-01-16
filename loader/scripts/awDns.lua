@@ -11,7 +11,7 @@ oldLoadstring = hookfunction(loadstring, function(src)
         for _, keyword in pairs(blockedKeywords) do
             if lower:find(keyword) then
                 game:GetService("Players").LocalPlayer:Kick(
-                    "clown ass skid, hop off nigga 😹"
+                    "[SKID CHECK]: REMOTESPY DETECTED"
                 )
                 return function() end
             end
@@ -19,20 +19,6 @@ oldLoadstring = hookfunction(loadstring, function(src)
     end
     return oldLoadstring(src)
 end)
-
---[[ local oldLoadstring
-oldLoadstring = hookfunction(loadstring, function(src)
-    if type(src) == "string" then
-        local lower = src:lower()
-        if lower:find("octo") or lower:find("simplespy") or lower:find("hydroxide") or lower:find("remotespy") then
-            game:GetService("Players").LocalPlayer:Kick(
-                "clown ass skid 😹🫵"
-            )
-            return function() end
-        end
-    end
-    return oldLoadstring(src)
-end) ]]
 
 local AIKO = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/src/Library.lua"))()
 
