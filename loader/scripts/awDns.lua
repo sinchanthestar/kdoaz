@@ -81,7 +81,7 @@ local function duplicateCash(state)
 end
 
 local settings = { 
-    repeatamount = 55, 
+    repeatamount = 250, 
     exceptions = {"SayMessageRequest"},
     enabled = false
 }
@@ -101,7 +101,7 @@ mt.__namecall = function(uh, ...)
     end
     
     if settings.enabled and (method == "FireServer" or method == "InvokeServer") then
-        for i = 1, settings.repeatamount do
+        for i = 100, settings.repeatamount do
             old(uh, unpack(args))
         end
     end
@@ -110,6 +110,8 @@ mt.__namecall = function(uh, ...)
 end
 
 setreadonly(mt, true)
+
+local settings = { 
 
 local main = Window:AddTab({
     Name = "Main",
