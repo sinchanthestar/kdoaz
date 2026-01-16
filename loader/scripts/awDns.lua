@@ -1,8 +1,46 @@
+local blockedRemoteSpies = {
+    "remotespy", "hydroxide", "dex", "explorer", 
+    "simplespyv3", "simplespy", "unnamed esp", "nameless"
+}
+
+local function checkForSpy()
+    for _, obj in pairs(game:GetDescendants()) do
+        if obj:IsA("ScreenGui") or obj:IsA("Frame") then
+            local name = obj.Name:lower()
+            for _, spyName in pairs(blockedRemoteSpies) do
+                if name:find(spyName) then
+                    obj:Destroy()
+                    game:GetService("Players").LocalPlayer:Kick("Remote spy detected and removed")
+                end
+            end
+        end
+    end
+end
+
+game.DescendantAdded:Connect(function(obj)
+    task.wait(0.1)
+    if obj:IsA("ScreenGui") or obj:IsA("Frame") then
+        local name = obj.Name:lower()
+        for _, spyName in pairs(blockedRemoteSpies) do
+            if name:find(spyName) then
+                obj:Destroy()
+                game:GetService("Players").LocalPlayer:Kick("clown ass nigga 😹🫵")
+            end
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(5) do
+        checkForSpy()
+    end
+end)
+
 local oldLoadstring
 oldLoadstring = hookfunction(loadstring, function(src)
     if type(src) == "string" and src:lower():find("octo") then
         game:GetService("Players").LocalPlayer:Kick(
-            "shut yo stupid ass up"
+            "clown ass nigga 😹🫵"
         )
         return function() end
     end
