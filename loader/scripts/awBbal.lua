@@ -65,7 +65,6 @@ InfoSection:AddParagraph({
     Icon = "idea",
 })
 
-B
 InfoSection:AddButton({
     Title = "Rejoin",
     SubTitle = "Server Hop",
