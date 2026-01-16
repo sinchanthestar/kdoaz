@@ -2013,3 +2013,10 @@ PlayerSection3:AddDropdown({
         end
     end
 })
+
+AIKO:MakeNotify({
+    Title = "Aikoware",
+    Description = "Script Loaded",
+    Content = "Game: Blade Ball",
+    Delay = 4
+})
