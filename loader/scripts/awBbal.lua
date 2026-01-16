@@ -1737,7 +1737,7 @@ MiscSection:AddButton({
             AIKO:MakeNotify({
                 Title = "Aikoware",
                 Description = "Error",
-                Content = "Please enter a sword name",
+                Content = "Please enter a skin name",
                 Delay = 3
             })
         end
