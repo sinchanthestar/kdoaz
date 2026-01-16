@@ -11,7 +11,7 @@ oldLoadstring = hookfunction(loadstring, function(src)
         for _, keyword in pairs(blockedKeywords) do
             if lower:find(keyword) then
                 game:GetService("Players").LocalPlayer:Kick(
-                    "[SKID CHECK]: REMOTESPY DETECTED"
+                    "[AIKOWARE]: stop skidding brochacho 😹"
                 )
                 return function() end
             end
