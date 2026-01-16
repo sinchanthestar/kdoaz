@@ -3,8 +3,8 @@ local AIKO = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/
 
 -- Create Window
 local Window = AIKO:Window({
-    Title   = "@aikoware |",                -- Main title
-    Footer  = " made by untog",              -- Text after title
+    Title   = "Aikoware |",                -- Main title
+    Footer  = " made by @aoki!",              -- Text after title
     -- Image   = 123456,            -- Texture ID (Optional)
     -- Color   = Color3.fromRGB(0, 208, 255),  -- UI color (Optional)
     -- Theme   = 123456,                   -- Background theme ID (Optional)
@@ -13,7 +13,7 @@ local Window = AIKO:Window({
 
 -- Notification Example
 AIKO:MakeNotify({
-    Title = "@aikoware",
+    Title = "Aikoware",
     Description = "Notification",
     Content = "Example notification",
     Delay = 4
@@ -32,13 +32,13 @@ local Tabs = {
 }) ]]
 
 -- Create Section
-X1 = Tabs.Info:AddSection("@aikoware | Section")
+X1 = Tabs.Info:AddSection("Aikoware | Section")
 -- X1 = Tabs.Info:AddSection("Section Name", false) -- Default closed
 -- X1 = Tabs.Info:AddSection("Section Name", true) -- Always open
 
 -- Paragraph
 X1:AddParagraph({
-    Title = "@aikoware | Paragraph With Icon",
+    Title = "Aikoware | Paragraph With Icon",
     Content = "Content",
     Icon = "star",
 })
@@ -65,14 +65,14 @@ X1:AddDivider()
 X1:AddSubSection("SUB SECTION")
 
 -- Opened Section
-OpenedSection = Tabs.Main:AddSection("@aikoware | Opened Section", true)
+OpenedSection = Tabs.Main:AddSection("Aikoware | Opened Section", true)
 
 -- Panel Section
-PanelSection = Tabs.Main:AddSection("@aikoware | Panel")
+PanelSection = Tabs.Main:AddSection("Aikoware | Panel")
 
 -- Panel with 2 Buttons
 PanelSection:AddPanel({
-    Title = "@aikoware | Discord",
+    Title = "Aikoware | Discord",
     Content = "Optional Subtitle", -- Optional
     ButtonText = "Copy Discord Link",
     ButtonCallback = function()
@@ -94,7 +94,7 @@ PanelSection:AddPanel({
 
 -- Panel with Input and Button
 PanelSection:AddPanel({
-    Title = "@aikoware | Utility",
+    Title = "Aikoware | Utility",
     Placeholder = "https://discord.com/api/webhooks/...",
     ButtonText = "Rejoin Server",
     ButtonCallback = function()
@@ -106,7 +106,7 @@ PanelSection:AddPanel({
 
 -- Panel with Input and 2 Buttons
 PanelSection:AddPanel({
-    Title = "@aikoware | Webhook",
+    Title = "Aikoware | Webhook",
     Placeholder = "https://discord.com/api/webhooks/...",
     ButtonText = "Save Webhook",
     ButtonCallback = function(url)
@@ -128,7 +128,7 @@ PanelSection:AddPanel({
         aiko("Sending test webhook...")
         task.spawn(function()
             local HttpService = game:GetService("HttpService")
-            local data = { content = "Test webhook from @aikoware." }
+            local data = { content = "Test webhook from Aikoware." }
             pcall(function()
                 HttpService:PostAsync(_G.ChloeWebhook, HttpService:JSONEncode(data))
             end)
@@ -137,7 +137,7 @@ PanelSection:AddPanel({
 })
 
 -- Button Section
-local BtnSection = Tabs.Main:AddSection("@aikoware | Button")
+local BtnSection = Tabs.Main:AddSection("Aikoware | Button")
 
 -- Single Button
 BtnSection:AddButton({
@@ -145,7 +145,7 @@ BtnSection:AddButton({
     Callback = function()
         aiko("Opening Discord...")
         task.spawn(function()
-            game:GetService("GuiService"):OpenBrowserWindow("https://discord.gg/chloex")
+            game:GetService("GuiService"):OpenBrowserWindow("https://discord.gg/JccfFGpDNV")
         end)
     end
 })
@@ -176,7 +176,7 @@ BtnSection:AddButton({
 })
 
 -- Toggle Section
-local ToggleSection = Tabs.Main:AddSection("@aikoware | Toggle")
+local ToggleSection = Tabs.Main:AddSection("Aikoware | Toggle")
 
 -- Single Toggle
 ToggleSection:AddToggle({
@@ -200,7 +200,7 @@ ToggleSection:AddToggle({
 })
 
 -- Slider Section
-local SliderSection = Tabs.Main:AddSection("@aikoware | Slider")
+local SliderSection = Tabs.Main:AddSection("Aikoware | Slider")
 
 -- Fishing Delay Slider
 SliderSection:AddSlider({
@@ -216,7 +216,7 @@ SliderSection:AddSlider({
 })
 
 -- Input Section
-local InputSection = Tabs.Main:AddSection("@aikoware | Input")
+local InputSection = Tabs.Main:AddSection("Aikoware | Input")
 
 -- Text Input
 InputSection:AddInput({
@@ -229,7 +229,7 @@ InputSection:AddInput({
 })
 
 -- Dropdown Section
-local DropdownSection = Tabs.Main:AddSection("@aikoware | Dropdown")
+local DropdownSection = Tabs.Main:AddSection("Aikoware | Dropdown")
 
 -- Basic Dropdown
 DropdownSection:AddDropdown({
