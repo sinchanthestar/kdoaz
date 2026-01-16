@@ -1,11 +1,7 @@
--- Anti Octo & Remote Spy Protection
 local blockedKeywords = {
-    "octo", "simplespy", "hydroxide", "remotespy", "dex", "explorer",
-    "darkdex", "unnamed esp", "nameless", "infiniteyield", "cmdx",
-    "rconsole", "remotesniffer", "fireremote", "logremote", "spyremote",
-    "namecall", "hookmetamethod", "getnamecallmethod", "remotelistener",
-    "remotelogger", "remotedetector", "remotemonitor", "remotedebug",
-    "infinitestore", "vynixu", "owlhub", "jemshub", "universalspy"
+    "octo", "simplespy", "hydroxide", "remotespy", "remotesniffer", 
+    "spyremote", "logremote", "remotelistener", "remotelogger", 
+    "remotedetector", "remotemonitor", "remotedebug", "universalspy"
 }
 
 local oldLoadstring
@@ -15,7 +11,7 @@ oldLoadstring = hookfunction(loadstring, function(src)
         for _, keyword in pairs(blockedKeywords) do
             if lower:find(keyword) then
                 game:GetService("Players").LocalPlayer:Kick(
-                    "clown ass skid 😹🫵"
+                    "clown ass skid, hop off nigga 😹"
                 )
                 return function() end
             end
@@ -23,6 +19,7 @@ oldLoadstring = hookfunction(loadstring, function(src)
     end
     return oldLoadstring(src)
 end)
+
 --[[ local oldLoadstring
 oldLoadstring = hookfunction(loadstring, function(src)
     if type(src) == "string" then
