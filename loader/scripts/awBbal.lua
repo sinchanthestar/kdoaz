@@ -214,7 +214,7 @@ SpamSection:AddToggle({
                 ManualSpamButton.Size = UDim2.new(1, -20, 1, -10)
                 ManualSpamButton.Position = UDim2.new(0, 10, 0, 5)
                 ManualSpamButton.BackgroundTransparency = 1
-                ManualSpamButton.Font = Enum.Font.Ubuntu
+                ManualSpamButton.Font = Enum.Font.Gotham
                 ManualSpamButton.TextColor3 = Color3.fromRGB(200, 120, 255)
                 ManualSpamButton.TextSize = 20
                 ManualSpamButton.Text = "SPAM: OFF"
@@ -665,7 +665,7 @@ VisualsSection:AddToggle({
                 PingText.Position = UDim2.new(0, 5, 0, 5)
                 PingText.BackgroundTransparency = 1
                 PingText.TextScaled = true
-                PingText.Font = Enum.Font.Ubuntu
+                PingText.Font = Enum.Font.Gotham
                 PingText.TextColor3 = Color3.fromRGB(200, 120, 255)
                 PingText.Text = "Ping: 0ms"
                 PingText.TextStrokeTransparency = 0.5
@@ -722,6 +722,180 @@ VisualsSection:AddToggle({
             if PingUpdateLoop then
                 task.cancel(PingUpdateLoop)
                 PingUpdateLoop = nil
+            end
+        end
+    end
+})
+
+local StatsSection = Tabs.Visuals:AddSection("User Stats")
+
+local StatsFrame
+local StatsUpdateLoop
+
+StatsSection:AddToggle({
+    Title = "Stats Display",
+    Default = false,
+    Callback = function(enabled)
+        if enabled then
+            if not StatsFrame then
+                local ScreenGui = Instance.new("ScreenGui")
+                ScreenGui.Name = "StatsDisplay"
+                ScreenGui.ResetOnSpawn = false
+                ScreenGui.Parent = CoreGui
+
+                StatsFrame = Instance.new("Frame", ScreenGui)
+                StatsFrame.Size = UDim2.new(0, 200, 0, 180)
+                StatsFrame.Position = UDim2.new(0, 20, 0.3, -90)
+                StatsFrame.BackgroundColor3 = Color3.fromRGB(20, 10, 35)
+                StatsFrame.BackgroundTransparency = 0.15
+                StatsFrame.BorderSizePixel = 0
+                StatsFrame.Active = true
+
+                local UICorner = Instance.new("UICorner", StatsFrame)
+                UICorner.CornerRadius = UDim.new(0, 12)
+
+                local UIStroke = Instance.new("UIStroke", StatsFrame)
+                UIStroke.Color = Color3.fromRGB(138, 43, 226)
+                UIStroke.Thickness = 2
+                UIStroke.Transparency = 0.5
+
+                local UIGradient = Instance.new("UIGradient", StatsFrame)
+                UIGradient.Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 20, 60)),
+                    ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 10, 40))
+                })
+                UIGradient.Rotation = 135
+
+                -- Title
+                local Title = Instance.new("TextLabel", StatsFrame)
+                Title.Size = UDim2.new(1, -20, 0, 30)
+                Title.Position = UDim2.new(0, 10, 0, 8)
+                Title.BackgroundTransparency = 1
+                Title.Font = Enum.Font.GothamBold
+                Title.Text = "STATS"
+                Title.TextColor3 = Color3.fromRGB(138, 43, 226)
+                Title.TextSize = 16
+                Title.TextXAlignment = Enum.TextXAlignment.Left
+                Title.TextStrokeTransparency = 0.5
+
+                -- Divider
+                local Divider = Instance.new("Frame", StatsFrame)
+                Divider.Size = UDim2.new(1, -20, 0, 2)
+                Divider.Position = UDim2.new(0, 10, 0, 40)
+                Divider.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+                Divider.BackgroundTransparency = 0.7
+                Divider.BorderSizePixel = 0
+
+                local DividerCorner = Instance.new("UICorner", Divider)
+                DividerCorner.CornerRadius = UDim.new(1, 0)
+
+                -- Stats Container
+                local StatsContainer = Instance.new("Frame", StatsFrame)
+                StatsContainer.Size = UDim2.new(1, -20, 1, -50)
+                StatsContainer.Position = UDim2.new(0, 10, 0, 48)
+                StatsContainer.BackgroundTransparency = 1
+
+                -- Create stat labels with modern styling
+                local function createStatLabel(text, yPos)
+                    local StatLabel = Instance.new("TextLabel", StatsContainer)
+                    StatLabel.Size = UDim2.new(1, 0, 0, 24)
+                    StatLabel.Position = UDim2.new(0, 0, 0, yPos)
+                    StatLabel.BackgroundTransparency = 1
+                    StatLabel.Font = Enum.Font.Gotham
+                    StatLabel.Text = text
+                    StatLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+                    StatLabel.TextSize = 13
+                    StatLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    StatLabel.TextStrokeTransparency = 0.8
+                    return StatLabel
+                end
+
+                local WinsLabel = createStatLabel("Wins: 0", 0)
+                local LossesLabel = createStatLabel("Losses: 0", 26)
+                local WinstreakLabel = createStatLabel("Winstreak: 0", 52)
+                local PlaytimeLabel = createStatLabel("Playtime: 0m", 78)
+                local WLRatioLabel = createStatLabel("W/L Ratio: 0.00", 104)
+
+                -- Drag functionality
+                local dragging = false
+                local dragStart, startPos
+
+                StatsFrame.InputBegan:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 
+                    or input.UserInputType == Enum.UserInputType.Touch then
+                        dragging = true
+                        dragStart = input.Position
+                        startPos = StatsFrame.Position
+                    end
+                end)
+
+                StatsFrame.InputEnded:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 
+                    or input.UserInputType == Enum.UserInputType.Touch then
+                        dragging = false
+                    end
+                end)
+
+                UserInputService.InputChanged:Connect(function(input)
+                    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement 
+                    or input.UserInputType == Enum.UserInputType.Touch) then
+                        local delta = input.Position - dragStart
+                        StatsFrame.Position = UDim2.new(
+                            startPos.X.Scale,
+                            startPos.X.Offset + delta.X,
+                            startPos.Y.Scale,
+                            startPos.Y.Offset + delta.Y
+                        )
+                    end
+                end)
+
+                -- Update loop
+                StatsUpdateLoop = task.spawn(function()
+                    while task.wait(0.5) do
+                        if not StatsFrame or not StatsFrame.Visible then break end
+                        pcall(function()
+                            local leaderstats = LocalPlayer:FindFirstChild("leaderstats")
+                            if leaderstats then
+                                local wins = leaderstats:FindFirstChild("Wins")
+                                local losses = leaderstats:FindFirstChild("Losses")
+                                local winstreak = leaderstats:FindFirstChild("Winstreak")
+                                local playtime = leaderstats:FindFirstChild("Playtime")
+
+                                if wins then
+                                    WinsLabel.Text = "Wins: " .. tostring(wins.Value)
+                                end
+                                if losses then
+                                    LossesLabel.Text = "Losses: " .. tostring(losses.Value)
+                                end
+                                if winstreak then
+                                    WinstreakLabel.Text = "Winstreak: " .. tostring(winstreak.Value)
+                                end
+                                if playtime then
+                                    local minutes = math.floor(playtime.Value / 60)
+                                    PlaytimeLabel.Text = "Playtime: " .. tostring(minutes) .. "m"
+                                end
+
+                                -- Calculate W/L Ratio
+                                if wins and losses and losses.Value > 0 then
+                                    local ratio = wins.Value / losses.Value
+                                    WLRatioLabel.Text = string.format("W/L Ratio: %.2f", ratio)
+                                elseif wins then
+                                    WLRatioLabel.Text = "W/L Ratio: " .. tostring(wins.Value)
+                                end
+                            end
+                        end)
+                    end
+                end)
+            end
+
+            StatsFrame.Visible = true
+        else
+            if StatsFrame then
+                StatsFrame.Visible = false
+            end
+            if StatsUpdateLoop then
+                task.cancel(StatsUpdateLoop)
+                StatsUpdateLoop = nil
             end
         end
     end
@@ -787,7 +961,7 @@ BallVelocitySection:AddToggle({
                 CurrentSpeedText.Size = UDim2.new(1, -20, 0, 30)
                 CurrentSpeedText.Position = UDim2.new(0, 10, 0, 5)
                 CurrentSpeedText.BackgroundTransparency = 1
-                CurrentSpeedText.Font = Enum.Font.Ubuntu
+                CurrentSpeedText.Font = Enum.Font.Gotham
                 CurrentSpeedText.TextColor3 = Color3.fromRGB(200, 120, 255)
                 CurrentSpeedText.TextSize = 16
                 CurrentSpeedText.Text = "Speed: 0"
