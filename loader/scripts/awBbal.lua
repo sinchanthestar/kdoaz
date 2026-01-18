@@ -129,7 +129,6 @@ local function CreateESP(player)
         ESPObject.Drawings.Name.Center = true
         ESPObject.Drawings.Name.Outline = true
         ESPObject.Drawings.Name.Size = 16
-        ESPObject.Drawings.Distance.Font = 3
     end
     
     if ESPLines.ShowHealth then
@@ -139,7 +138,6 @@ local function CreateESP(player)
         ESPObject.Drawings.Health.Center = true
         ESPObject.Drawings.Health.Outline = true
         ESPObject.Drawings.Health.Size = 14
-        ESPObject.Drawings.Distance.Font = 3
     end
     
     if ESPLines.ShowTracer then
@@ -156,7 +154,6 @@ local function CreateESP(player)
         ESPObject.Drawings.Distance.Center = true
         ESPObject.Drawings.Distance.Outline = true
         ESPObject.Drawings.Distance.Size = 14
-        ESPObject.Drawings.Distance.Font = 3
     end
     
     ESPLines.Objects[player] = ESPObject
