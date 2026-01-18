@@ -163,30 +163,6 @@ expsec:AddToggle({
     end
 })
 
-local remote = game:GetService("ReplicatedStorage").Remotes
-local running = false
-
-expsec:AddToggle({
-    Title = "Auto Cash",
-    Default = false,
-    Callback = function(value)
-        running = value
-
-        if value then
-            remote.Pabarya:InvokeServer({ Amount = 0.5 })
-
-            for i = 1, 2000 do
-                task.spawn(function()
-                    while running do
-                        remote.Pabuo:InvokeServer({ Amount = 0.5 })
-                        task.wait(0.01)
-                    end
-                end)
-            end
-        end
-    end
-})
-
 expsec:AddDivider()
 
 local player = game:GetService("Players").LocalPlayer
