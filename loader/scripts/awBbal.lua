@@ -471,8 +471,10 @@ local function AutoAbilityV2()
                abilities["Calming Deflection"].Enabled or abilities["Aerodynamic Slash"].Enabled or 
                abilities["Fracture"].Enabled or abilities["Death Slash"].Enabled then
                 game:GetService("ReplicatedStorage").Remotes.AbilityButtonPress:Fire()
-                task.wait(getgenv().AutoAbilityDelayV2)
-                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("DeathSlashShootActivation"):FireServer(true)
+                task.spawn(function()
+                    task.wait(getgenv().AutoAbilityDelayV2 or 2.8)
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("DeathSlashShootActivation"):FireServer(true)
+                end)
                 return true
             end
         end
