@@ -1,4 +1,4 @@
-local blockedKeywords = {
+
 local oldLoadstring
 oldLoadstring = hookfunction(loadstring, function(src)
     if type(src) == "string" then
