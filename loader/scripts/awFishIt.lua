@@ -648,7 +648,136 @@ BlatantV2.Settings = {
     CancelDelay = 0.001
 }
 
-local RF_UpdateAutoFishingState = NetFolder:FindFirstChild("RF/UpdateAutoFishingState")
+-- Blatant V2 Remote References
+local RE_EquipToolFromHotbar = GetRemote("RE/EquipToolFromHotbar")
+local RF_ChargeFishingRod = GetRemote("RF/ChargeFishingRod")
+local RF_RequestFishingMinigameStarted = GetRemote("RF/RequestFishingMinigameStarted")
+local RE_FishingCompleted = GetRemote("RF/CatchFishCompleted")
+local RF_CancelFishingInputs = GetRemote("RF/CancelFishingInputs")
+local RF_UpdateAutoFishingState = GetRemote("RF/UpdateAutoFishingState")
+
+-- Blatant V2 Functions
+local function StartBlatantV2Fishing()
+    task.spawn(function()
+        pcall(function()
+            RF_CancelFishingInputs:InvokeServer()
+        end)
+
+        task.wait(BlatantV2.Settings.ChargeDelay)
+
+        local serverTime = workspace:GetServerTimeNow()
+        pcall(function()
+            RF_ChargeFishingRod:InvokeServer(serverTime)
+        end)
+
+        pcall(function()
+            RF_RequestFishingMinigameStarted:InvokeServer(-1, 0.999)
+        end)
+
+        task.wait(BlatantV2.Settings.CompleteDelay)
+
+        pcall(function()
+            RE_FishingCompleted:FireServer()
+        end)
+
+        task.wait(BlatantV2.Settings.CancelDelay)
+
+        pcall(function()
+            RF_CancelFishingInputs:InvokeServer()
+        end)
+    end)
+end
+
+local function ToggleBlatantV2(enabled)
+    BlatantV2.Active = enabled
+
+    if enabled then
+        pcall(function()
+            RE_EquipToolFromHotbar:FireServer(1)
+        end)
+
+        task.spawn(function()
+            task.wait(0.5)
+            while BlatantV2.Active do
+                if AutoEquipRodEnabled then
+                    pcall(function()
+                        RE_EquipToolFromHotbar:FireServer(1)
+                    end)
+                end
+
+                if RF_UpdateAutoFishingState then
+                    pcall(function()
+                        RF_UpdateAutoFishingState:InvokeServer(true)
+                    end)
+                end
+
+                StartBlatantV2Fishing()
+                task.wait(1.5)
+            end
+
+            if RF_UpdateAutoFishingState then
+                pcall(function()
+                    RF_UpdateAutoFishingState:InvokeServer(false)
+                end)
+            end
+        end)
+    end
+end
+
+-- Blatant V2 UI Controls
+blatv2:AddToggle({
+    Title = "Enable Blatant V2",
+    Content = "Ultra-fast fishing using new remotes",
+    Default = false,
+    Callback = function(enabled)
+        ToggleBlatantV2(enabled)
+    end
+})
+
+blatv2:AddInput({
+    Title = "Charge Delay",
+    Placeholder = "0.007",
+    Callback = function(value)
+        local num = tonumber(value)
+        if num and num >= 0 then
+            BlatantV2.Settings.ChargeDelay = num
+        end
+    end
+})
+
+blatv2:AddInput({
+    Title = "Complete Delay",
+    Placeholder = "0.001",
+    Callback = function(value)
+        local num = tonumber(value)
+        if num and num >= 0 then
+            BlatantV2.Settings.CompleteDelay = num
+        end
+    end
+})
+
+blatv2:AddInput({
+    Title = "Cancel Delay",
+    Placeholder = "0.001",
+    Callback = function(value)
+        local num = tonumber(value)
+        if num and num >= 0 then
+            BlatantV2.Settings.CancelDelay = num
+        end
+    end
+})
+
+blatv2:AddButton({
+    Title = "Manual Stop",
+    Content = "Stop Blatant V2 fishing",
+    Callback = function()
+        ToggleBlatantV2(false)
+        pcall(function()
+            RF_CancelFishingInputs:InvokeServer()
+        end)
+        notify("Aikoware", "| Blatant V2", "Fishing stopped", 2)
+    end
+})
 
 @@ -732,50 +884,104 @@ ench:AddToggle({
             task.wait(3)
