@@ -15,7 +15,7 @@ oldLoadstring = hookfunction(loadstring, function(src)
     return oldLoadstring(src)
 end)
 
-local AIKO = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/src/Library.lua"))()
+local AIKO = loadstring(game:HttpGet("https://raw.githubusercontent.com/sinchanthestar/kdoaz/refs/heads/main/src/Library.lua"))()
 
 local Window = AIKO:Window({
     Title   = "Aikoware |",
