@@ -150,7 +150,7 @@ local Misc = Window:AddTab({
     Icon = "snowflake"
 })
 
-local dcsec = Home:AddSection("Support", true)
+local dcsec = Home:AddSection("Support")
 
 dcsec:AddParagraph({
     Title = "Discord",
