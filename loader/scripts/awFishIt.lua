@@ -20,13 +20,29 @@ oldLoadstring = hookfunction(loadstring, function(src)
     return oldLoadstring(src)
 end)
 
-local AIKO = loadstring(game:HttpGet("https://raw.githubusercontent.com/sinchanthestar/kdoaz/refs/heads/main/src/Library.lua"))()
+local AIKO
+local success, err = pcall(function()
+    AIKO = loadstring(game:HttpGet("https://raw.githubusercontent.com/sinchanthestar/kdoaz/refs/heads/main/src/Library.lua"))()
+end)
 
-local Window = AIKO:Window({
-    Title   = "Aikoware |",
-    Footer  = "made by @aoki!",              
-    Version = 1,
-})
+if not success or not AIKO then
+    warn("[AIKOWARE] Failed to load Library:", err)
+    return
+end
+
+local Window
+success, err = pcall(function()
+    Window = AIKO:Window({
+        Title   = "Aikoware |",
+        Footer  = "made by @aoki!",              
+        Version = 1,
+    })
+end)
+
+if not success or not Window then
+    warn("[AIKOWARE] Failed to create Window:", err)
+    return
+end
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")

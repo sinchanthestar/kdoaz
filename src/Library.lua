@@ -86,7 +86,7 @@ local Icons = {
 
 local LucideIcons = {}
 pcall(function()
-    LucideIcons = loadstring(game:HttpGet("https://raw.githubusercontent.com/a11bove/kdoaz/refs/heads/main/src/icons.lua"))()
+    LucideIcons = loadstring(game:HttpGet("https://raw.githubusercontent.com/sinchanthestar/kdoaz/refs/heads/main/src/icons.lua"))()
 end)
 
 local function GetIcon(iconName)
