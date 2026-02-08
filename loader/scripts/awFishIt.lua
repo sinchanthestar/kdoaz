@@ -31,7 +31,7 @@ if not success or not AIKO then
 end
 
 local Window
-success, err = pcall(function()
+local windowSuccess, windowErr = pcall(function()
     Window = AIKO:Window({
         Title   = "Aikoware |",
         Footer  = "made by @aoki!",              
@@ -39,8 +39,8 @@ success, err = pcall(function()
     })
 end)
 
-if not success or not Window then
-    warn("[AIKOWARE] Failed to create Window:", err)
+if not windowSuccess or not Window then
+    warn("[AIKOWARE] Failed to create Window:", windowErr)
     return
 end
 
