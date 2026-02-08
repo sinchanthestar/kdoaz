@@ -14,7 +14,7 @@ end
 
 local LucideIcons = loadstring(game:HttpGet("https://raw.githubusercontent.com/sinchanthestar/kdoaz/refs/heads/main/src/icons.lua"))()
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/sinchanthestar/kdoaz/refs/heads/main/src/source.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/sinchanthestar/kdoaz/refs/heads/main/src/Library.lua"))()
 
 Library:MakeNotify({
     Title = "@aikoware",
